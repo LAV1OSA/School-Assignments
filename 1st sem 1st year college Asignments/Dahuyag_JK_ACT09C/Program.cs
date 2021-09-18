@@ -35,17 +35,6 @@ namespace Dahuyag_JK_ACT09C
                 // Update root
                 rootApprox = root;
             }
-            //my own code: sadly works only for perfect squares
-            /* for (double x = 0; x <= baseNum; x++) //checks numbers less than the given number
-             {
-                 if (x * x == baseNum)// checks if the number multiplies itself once to get the given number
-                 {
-                     root = x;
-                     break;
-                 }
-                 else
-                     continue; 
-             }*/
             return root;
         }
         static double cubeRoot(double baseNum, float errorlevel)
@@ -62,34 +51,21 @@ namespace Dahuyag_JK_ACT09C
                 // Update root
                 rootApprox = root;
             }
-            // my own code that only works for perfect cube:
-            /*for (double x = 0; x <= baseNum; x++) //checks numbers less than the given number
-            {
-                {
-                    if (x * x * x == baseNum) // checks if the number multiplies itself once to get the given number
-                    {
-                        root = x;
-                        break;
-                    }
-                    else
-                        continue;
-                }
-            }*/
             return root;
         }
         static void printResult(int num)
         {
             double squared, cubed, rootSquare = 0, rootCube;
-            float errorlevel = 0.00000000000001f;
+            float errorlevel = 0.000001f;
             squared = squaredNum(num);
             cubed = cubedNum(num);
             if(num > 0)
                 rootSquare = squareRoot(num,errorlevel);
             rootCube = cubeRoot(num, errorlevel);
             if (num > 0)
-                Console.WriteLine("The number entered is: {0}\nThe square of the number is: {1}\nThe cube of the number is: {2}\nThe square root of the number is: {3}\nThe cube root of the number is: {4}\n", num, squared, cubed, rootSquare, rootCube);
+                Console.WriteLine("The number entered is: {0}\nThe square of the number is: {1}\nThe cube of the number is: {2}\nThe square root of the number is: {3:F5}\nThe cube root of the number is: {4:F5}\n", num, squared, cubed, rootSquare, rootCube);
             else
-                Console.WriteLine("The number entered is: {0}\nThe square of the number is: {1}\nThe cube of the number is: {2}\nThe square root of the number is imaginary\nThe cube root of the number is: {3}\n", num, squared, cubed, rootCube);
+                Console.WriteLine("The number entered is: {0}\nThe square of the number is: {1}\nThe cube of the number is: {2}\nThe square root of the number is imaginary\nThe cube root of the number is: {3:F5}\n", num, squared, cubed, rootCube);
         }
     }
 }

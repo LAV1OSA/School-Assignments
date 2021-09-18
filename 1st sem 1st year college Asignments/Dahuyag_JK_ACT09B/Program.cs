@@ -6,102 +6,53 @@ namespace Dahuyag_JK_ACT09B
     {
         static void Main(string[] args)
         {
-            int y = 0;
-            int z = 0;
-            int[] evenNum = new int[50];
-            int[] oddNum = new int[50];
-           
-            Console.WriteLine("Here is the list of even numbers:");
-            for (y = 0; y < 50; y++)
+            int[] numberList = new int[100];
+            int[] oddNumbers = new int[50];
+            int[] evenNumbers = new int[50];
+            for (int x = 0; x < 100; x++)
             {
-                if (y == 49)
-                {
-                    Console.Write("{0} ", evenNum[y]);
-                    break;
-                }
-                Console.Write("{0}, ",evenNum[y]);
+                numberList[x] = x + 1;
             }
-            Console.WriteLine("\nHere is the list of odd numbers:");
-            for (y = 0; y < 50; y++)
-            {
-                if (y == 49)
-                {
-                    Console.Write("{0} ", oddNum[y]);
-                    break;
-                }
-                Console.Write("{0}, ", oddNum[y]);
-            }
-            Console.ReadLine();
-        }
-        static int evenNum(int num)
-        {
-            int[] evenNum = new int[50];
+            EvenNum(numberList).CopyTo(evenNumbers,0);
+            OddNum(numberList).CopyTo(oddNumbers,0);
 
-           /* if (num % 2 == 0)
-                return true;
-            else
-                return false;
-            for (int x = 1; x < 101; x++)
+            Console.WriteLine("Here is the list of odd and even numbers:\nOdd:\tEven:");
+            for(int index = 0; index < 50; index++)
             {
-                if (isEven(x))
-                {
-                    evenNum[y] = x;
-                    y++;
-                }
-                else
-                {
-                    oddNum[z] = x;
-                    z++;
-                }
-            }*/
-        }
-        /*static void Main(string[] args)
-        {
-            int y = 0;
-            int z = 0;
-            int[] evenNum = new int[50];
-            int[] oddNum = new int[50];
-            for (int x = 1; x < 101; x++)
-            {
-                if (isEven(x))
-                {
-                    evenNum[y] = x;
-                    y++;
-                }
-                else
-                {
-                    oddNum[z] = x;
-                    z++;
-                }
-            }
-            Console.WriteLine("Here is the list of even numbers:");
-            for (y = 0; y < 50; y++)
-            {
-                if (y == 49)
-                {
-                    Console.Write("{0} ", evenNum[y]);
-                    break;
-                }
-                Console.Write("{0}, ", evenNum[y]);
-            }
-            Console.WriteLine("\nHere is the list of odd numbers:");
-            for (y = 0; y < 50; y++)
-            {
-                if (y == 49)
-                {
-                    Console.Write("{0} ", oddNum[y]);
-                    break;
-                }
-                Console.Write("{0}, ", oddNum[y]);
+                Console.Write("{1}\t{0}", evenNumbers[index], oddNumbers[index]);
+                Console.WriteLine();
             }
             Console.ReadLine();
         }
-        static bool isEven(int num)
+        static Array EvenNum(Array numbers)
         {
-            if (num % 2 == 0)
-                return true;
-            else
-                return false;
-        }*/
+            int[] listOFEvenNumbers = new int[50];
+            int index = 0;
+            foreach (int x in numbers) 
+            {
+                if (x % 2 == 0)
+                {
+                    listOFEvenNumbers[index] = x;
+                    index++;
+                }
+                   
+            }
+            return listOFEvenNumbers;
+        }
+        static Array OddNum(Array numbers)
+        {
+            int[] listOfOddNumbers = new int[50];
+            int index = 0;
+            foreach (int x in numbers)
+            {
+                if (x % 2 != 0)
+                {
+                    listOfOddNumbers[index] = x;
+                    index++;
+                }
+
+            }
+            return listOfOddNumbers;
+        }
     }
 }
