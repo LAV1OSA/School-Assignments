@@ -89,10 +89,11 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
                 Thread.Sleep(500);
             }
         }
-        static void Computation(out string history)
+        static void Computation(out string output)
         {
             double finalAnswer = 0;
             int shapeChoice;
+            Console.WriteLine("You chose option 1!");
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("*************************************************************************");
             Console.ForegroundColor = ConsoleColor.White;
@@ -110,6 +111,12 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
                 case 2:
                     finalAnswer = SemiCircle();
                     break;
+                case 3:
+                    finalAnswer = Ring();
+                    break;
+                case 4:
+                    finalAnswer = Ellipse();
+                    break;
             }
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Cyan;
@@ -120,7 +127,7 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             Console.WriteLine("*************************************************************************\n");
             Console.ResetColor();
             Console.WriteLine("The computed value is: {0}", finalAnswer);
-            history = Convert.ToString(finalAnswer);
+            output = Convert.ToString(finalAnswer);
             Console.ReadLine();
         }
         static void Summary()
@@ -131,6 +138,7 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
         {
 
         }
+        //General Circle Method
         static double Circle()
         {
             int given2 = 0;
@@ -140,15 +148,14 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             Console.WriteLine("Pick the number of the value to compute:\n(1:Radius)\n(2:Diameter)\n(3:Area)\n(4:Circumference)\n(5:Chord)\n(6:Arc Length)\n(7:Area of Sector)\nInput the number of your choice:");
             int asked = Convert.ToInt32(Console.ReadLine());
             Title();
-            Console.WriteLine("Pick the number of the value that is given:\n(1:Radius)\n(2:Diameter)\n(3:Area)\n(4:Circumference)\n(5:Central Angle)\nNote: Some values might now work for certain formulas\nInput the number of your choice:");
+            Console.WriteLine("Pick the number of the value that is given:\n(1:Radius)\n(2:Diameter)\n(3:Area)\n(4:Circumference)\n(5:Central Angle)\nNote: Some values might not work for certain formulas\nInput the number of your choice:");
             int given = Convert.ToInt32(Console.ReadLine());
-            Title();
             Console.WriteLine("Input the value of the given: ");
             int value = Convert.ToInt32(Console.ReadLine());
             if (asked >= 5 && asked <= 7)
             {
                 Title();
-                Console.WriteLine("Pick the number of the value that is given:\n(1:Radius)\n(2:Diameter)\n(3:Area)\n(4:Circumference)\n(5:Chord)\n(6:Arc Length)\n(7:Area of Sector)\n(8:Central Angle)\nNote: Some values might now work for certain formulas\nInput the number of your choice:");
+                Console.WriteLine("Your choice needs two given values\nPick the number of the value that is given:\n(1:Radius)\n(2:Diameter)\n(3:Area)\n(4:Circumference)\n(5:Central Angle)\nNote: Some values might not work for certain formulas\nInput the number of your choice:");
                 given2 = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("Input the value of the given: ");
                 value2 = Convert.ToInt32(Console.ReadLine());
@@ -183,6 +190,7 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             }
             return askedValue;
         }
+        //General Semi Circle Method
         static double SemiCircle()
         {
             double askedValue = 0;
@@ -193,15 +201,14 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             Console.WriteLine("Pick the number of the value to compute:\n(1:Radius)\n(2:Diameter)\n(3:Area)\n(4:Circumference)\n(5:Arc Length)\n(6:Area of Sector)\nInput the number of your choice:");
             int asked = Convert.ToInt32(Console.ReadLine());
             Title();
-            Console.WriteLine("Pick the number of the value that is given:\n(1:Radius)\n(2:Diameter)\n(3:Area)\n(4:Circumference)\n(5:Central Angle)\nNote: Some values might now work for certain formulas\nInput the number of your choice:");
+            Console.WriteLine("Pick the number of the value that is given:\n(1:Radius)\n(2:Diameter)\n(3:Area)\n(4:Circumference)\n(5:Central Angle)\nNote: Some values might not work for certain formulas\nInput the number of your choice:");
             int given = Convert.ToInt32(Console.ReadLine());
-            Title();
             Console.WriteLine("Input the value of the given: ");
             int value = Convert.ToInt32(Console.ReadLine());
             if (asked >= 5 && asked <= 7)
             {
                 Title();
-                Console.WriteLine("Pick the number of the value that is given:\n(1:Radius)\n(2:Diameter)\n(3:Area)\n(4:Circumference)\n(5:Chord)\n(6:Arc Length)\n(7:Area of Sector)\n(8:Central Angle)\nNote: Some values might now work for certain formulas\nInput the number of your choice:");
+                Console.WriteLine("Your choice needs two given values\nPick the number of the value that is given:\n(1:Radius)\n(2:Diameter)\n(3:Area)\n(4:Circumference)\n(5:Central Angle)\nNote: Some values might not work for certain formulas\nInput the number of your choice:");
                 given2 = Convert.ToInt32(Console.ReadLine());
                 Console.WriteLine("Input the value of the given: ");
                 value2 = Convert.ToInt32(Console.ReadLine());
@@ -209,29 +216,90 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             switch (asked)
             {
                 case 1:
-                    CircleRadius(given, value, out askedValue);
+                    SemiCircleRadius(given, value, out askedValue);
                     break;
                 case 2:
-                    CircleDiameter(given, value, out askedValue);
+                    SemiCircleDiameter(given, value, out askedValue);
                     break;
                 case 3:
-                    CircleArea(given, value, out askedValue);
+                    SemiCircleArea(given, value, out askedValue);
                     break;
                 case 4:
-                    CirclePerimeter(given, value, out askedValue);
+                    SemiCirclePerimeter(given, value, out askedValue);
                     break;
                 case 5:
-                    CircleChord(given, value, given2, value2, out askedValue);
+                    SemiCircleArcLength(given, value, given2, value2, out askedValue);
                     break;
                 case 6:
-                    CircleArcLength(given, value, given2, value2, out askedValue);
-                    break;
-                case 7:
-                    CircleSector(given, value, given2, value2, out askedValue);
+                    SemiCircleSector(given, value, given2, value2, out askedValue);
                     break;
                 default:
                     Console.WriteLine("Error. Choice does not exist. Try again.");
                     goto SemiCircleSelection;
+            }
+            return askedValue;
+        }
+        static double Ring()
+        {
+            double askedValue = 0;
+        RingSelection:
+            Title();
+            Console.WriteLine("Pick the number of the value to compute:\n(1:Area)\n(2:Circumference)\nInput the number of your choice:");
+            int asked = Convert.ToInt32(Console.ReadLine());
+            Title();
+            Console.WriteLine("Pick the number of the value that is given:\n(1:Smaller Radius)\n(2:Bigger Radius)\n(3:Smaller Diameter)\n(4:Bigger Diameter)\nNote: Some values might not work for certain formulas\nInput the number of your choice:");
+            int given = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Input the value of the given: ");
+            int value = Convert.ToInt32(Console.ReadLine());
+            Title();
+            Console.WriteLine("To compute the value, you need two given values\nPick the number of the value that is given:\n(1:Smaller Radius)\n(2:Bigger Radius)\n(3:Smaller Diameter)\n(4:Bigger Diameter)\nNote: Some values might not work for certain formulas\nInput the number of your choice:");
+            int given2 = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Input the value of the given: ");
+            double value2 = Convert.ToInt32(Console.ReadLine());
+            
+            switch (asked)
+            {
+                case 1:
+                    RingArea(given, value, given2, value2, out askedValue);
+                    break;
+                case 2:
+                    RingCircumference(given, value, given2, value2, out askedValue);
+                    break;
+                default:
+                    Console.WriteLine("Error. Choice does not exist. Try again.");
+                    goto RingSelection;
+            }
+            return askedValue;
+        }
+        static double Ellipse()
+        {
+            double askedValue = 0;
+        RingSelection:
+            Title();
+            Console.WriteLine("Pick the number of the value to compute:\n(1:Area)\n(2:Circumference)\nInput the number of your choice:");
+            int asked = Convert.ToInt32(Console.ReadLine());
+            Title();
+            Console.WriteLine("Pick the number of the value that is given:\n(1:Radius 1)\n(2:Radius 2)\n(3:Circumference)\n(4:Area)\nNote: Some values might not work for certain formulas\nInput the number of your choice:");
+            int given = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Input the value of the given: ");
+            int value = Convert.ToInt32(Console.ReadLine());
+            Title();
+            Console.WriteLine("To compute the value, you need two given values\nPick the number of the value that is given:\n(1:Radius 1)\n(2:Radius 2)\n(3:Circumference)\n(4:Area)\nNote: Some values might not work for certain formulas\nInput the number of your choice:");
+            int given2 = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Input the value of the given: ");
+            double value2 = Convert.ToInt32(Console.ReadLine());
+
+            switch (asked)
+            {
+                case 1:
+                    EllipseArea(given, value, given2, value2, out askedValue);
+                    break;
+                case 2:
+                    EllipseCircumference(given, value, given2, value2, out askedValue);
+                    break;
+                default:
+                    Console.WriteLine("Error. Choice does not exist. Try again.");
+                    goto RingSelection;
             }
             return askedValue;
         }
@@ -249,6 +317,10 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
                     break;
                 case 4:
                     askedValue = Math.Pow((value / (2 * Math.PI)), 2) * Math.PI;
+                    break;
+                default:
+                    Console.WriteLine("Cannot compute the required value using the given value(s). Press enter to retry.");
+                    Console.ReadLine();
                     break;
             }
             return askedValue;
@@ -293,7 +365,7 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             switch (given)
             {
                 case 1:
-                    askedValue = value / Math.PI;
+                    askedValue = value * 2;
                     break;
                 case 3:
                     askedValue = Math.Sqrt(value / Math.PI) * 2;
@@ -374,9 +446,9 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             return askedValue;
         }
         //all Ellipse Formulas
-        static double EllipseArea(int given, double value, int given2, double value2)
+        static double EllipseArea(int given, double value, int given2, double value2, out double askedValue)
         {
-            double askedValue = 0;
+            askedValue = 0;
             if((given == 1 && given2 == 2)||(given == 2 && given2== 1))
             {
                 askedValue = Math.PI * value * value2;
@@ -391,9 +463,9 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             }
             return askedValue;
         }
-        static double EllipseCircumference(int given, double value, int given2, double value2)
+        static double EllipseCircumference(int given, double value, int given2, double value2, out double askedValue)
         {
-            double askedValue = 0;
+            askedValue = 0;
             if ((given == 1 && given2 == 2) || (given == 2 && given2 == 1))
             {
                 askedValue = 2 * Math.PI * Math.Sqrt((Math.Pow(value,2) + Math.Pow(value2, 2))/2);
@@ -409,9 +481,9 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             return askedValue;
         }
         //All Semi Circle Formulas
-        static double SemiCircleArea(int given, double value)
+        static double SemiCircleArea(int given, double value, out double askedValue)
         {
-            double askedValue = 0;
+            askedValue = 0;
             switch (given)
             {
                 case 1:
@@ -426,9 +498,9 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             }
             return askedValue;
         }
-        static double SemiCirclePerimeter(int given, double value)
+        static double SemiCirclePerimeter(int given, double value, out double askedValue)
         {
-            double askedValue = 0;
+            askedValue = 0;
             switch (given)
             {
                 case 1:
@@ -466,37 +538,14 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             switch (given)
             {
                 case 1:
-                    askedValue = value / Math.PI;
+                    askedValue = value * 2;
                     break;
                 case 3:
-                    askedValue = Math.Sqrt(value / Math.PI) * 2;
+                    askedValue = Math.Sqrt((value*2) / Math.PI) * 2;
                     break;
                 case 4:
-                    askedValue = Math.PI * value;
+                    askedValue = (value / (Math.PI))*2;
                     break;
-            }
-            return askedValue;
-        }
-        static double SemiCircleChord(int given, double value, int given2, double value2, out double askedValue)
-        {
-            askedValue = 0;
-            if (given == 2)
-            {
-                value /= 2;
-                given = 1;
-            }
-            if (given2 == 2)
-            {
-                value2 /= 2;
-                given2 = 1;
-            }
-            if (given == 1 && given2 == 5)
-            {
-                askedValue = 2 * value * Math.Sin(value2 / 2);
-            }
-            else if (given == 5 && given2 == 1)
-            {
-                askedValue = 2 * value2 * Math.Sin(value / 2);
             }
             return askedValue;
         }
@@ -547,9 +596,9 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             return askedValue;
         }
         //All Ring Formulas
-        static double RingArea(int given, double value, int given2, double value2)
+        static double RingArea(int given, double value, int given2, double value2, out double askedValue)
         {
-            double askedValue = 0;
+            askedValue = 0;
             if (given == 4)
             {
                 value /= 2;
@@ -581,9 +630,9 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             }
             return askedValue;
         }
-        static double RingCircumference(int given, double value, int given2, double value2)
+        static double RingCircumference(int given, double value, int given2, double value2, out double askedValue)
         {
-            double askedValue;
+            askedValue = 0;
             
             askedValue = 2 * Math.PI * (value2 + value);
 
