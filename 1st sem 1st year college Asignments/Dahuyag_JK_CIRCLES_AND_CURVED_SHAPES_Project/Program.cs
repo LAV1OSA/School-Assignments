@@ -42,7 +42,6 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
                 goto Selection;
             
         }
-
         static void Title()
         {
             Console.Clear();
@@ -75,10 +74,10 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
                 foreach (char i in x)
                 {
                     Console.Write(i);
-                    Thread.Sleep(1);
+                    Thread.Sleep(10);
                 }
                 Console.WriteLine();
-                Thread.Sleep(1);
+                Thread.Sleep(500);
             }
         }
         static void Computation()
@@ -139,10 +138,6 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             Console.WriteLine("{3} = {4} {5}units \n{6} = {7} {8} units \n\nThe {2} is: {0} {1} units\n\nPress Enter to go back to the seletion screen", finalAnswer, unit, requiredValue, given, givenValue, unitOfGiven, given2, givenValue2, unitOfGiven2);
             Console.ReadLine();
         }
-        /*    static void Summary()
-            {
-
-            }*/
         static bool CheckComputability(int given)
         {
             bool canCompute = true;
@@ -791,11 +786,11 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             }
             if (given == 1 && given2 == 5)
             {
-                askedValue = 2 * value * Math.Sin((value2 / 2));
+                askedValue = 2 * value * (Math.Sin(((value2 * Math.PI) / 360)));
             }
             else if (given == 5 && given2 == 1)
             {
-                askedValue = 2 * value2 * Math.Sin((value / 2));
+                askedValue = 2 * value2 * (Math.Sin(((value2 * Math.PI) / 360)));
             }
             return askedValue;
         }
