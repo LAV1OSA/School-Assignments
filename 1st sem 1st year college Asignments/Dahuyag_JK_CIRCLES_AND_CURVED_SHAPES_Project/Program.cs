@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Threading;
+using System.Collections.Generic;
 
 namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
 {
     class Program
     {
+        public static List<SummaryList> history = new List<SummaryList>(); // declared a global list for me to use in computation and summary functions
+        public static int counter = 0; //declared a global counter so it wont resent every time I call the computation function
         static void Main(string[] args)
         {
             string choice;
-            string[] overallHistory = new string[100];
-            string history = "";
             Welcome();
         Selection:
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("************************************************************************************************************************");
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("Please select your choice: (1:COMPUTATION) (2:EXIT)\n");
+            Console.WriteLine("Please select your choice: (1:COMPUTATION) (2:SUMMARY) (3:EXIT)\n");
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("************************************************************************************************************************\n");
             Console.ResetColor();
@@ -30,6 +31,10 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
                     break;
                 case "2":
                     Console.Clear();
+                    Summary();
+                    break;
+                case "3":
+                    Console.Clear();
                     Exit();
                     break;
                 default:
@@ -37,11 +42,10 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
                     Console.ReadLine();
                     goto Selection;
             }
-            overallHistory[0] = history;
-            if (choice == "1")
+            if (choice == "1" || choice == "2")
                 goto Selection;
             
-        }
+        }  
         static void Title()
         {
             Console.Clear();
@@ -79,7 +83,7 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
                 Console.WriteLine();
                 Thread.Sleep(500);
             }
-        }
+        }//responsible for the typing-like of the texts in the welcome and exit screens
         static void Computation()
         {
             string givenValue = "";
@@ -92,7 +96,9 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             string requiredValue = "";
             bool squared = false;
             double finalAnswer = 0;
-            int shapeChoice;
+            string shapeChoice = "";
+            int shapeChoiceNumber;
+            int innercounter = 0;
             Console.WriteLine("You chose option 1!");
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("************************************************************************************************************************");
@@ -101,20 +107,25 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("************************************************************************************************************************\n");
             Console.ResetColor();
-
-            shapeChoice = Convert.ToInt32(Console.ReadLine());
-            switch (shapeChoice)
+            
+            shapeChoiceNumber = Convert.ToInt32(Console.ReadLine());
+            
+            switch (shapeChoiceNumber)
             {
                 case 1:
+                    shapeChoice = "Circle";
                     finalAnswer = Circle(out squared, out requiredValue, out given, out givenValue, out unitOfGiven, out given2, out givenValue2, out unitOfGiven2);
                     break;
                 case 2:
+                    shapeChoice = "Semi-Circle";
                     finalAnswer = SemiCircle(out squared, out requiredValue, out given, out givenValue, out unitOfGiven, out given2, out givenValue2, out unitOfGiven2);
                     break;
                 case 3:
+                    shapeChoice = "Ring";
                     finalAnswer = Ring(out squared, out requiredValue, out given, out givenValue, out unitOfGiven, out given2, out givenValue2, out unitOfGiven2);
                     break;
                 case 4:
+                    shapeChoice = "Ellipse";
                     finalAnswer = Ellipse(out squared, out requiredValue, out given, out givenValue, out unitOfGiven, out given2, out givenValue2, out unitOfGiven2);
                     break;
             }
@@ -127,6 +138,7 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
                     unit = "";
                     break;
             }
+            
             Console.Clear();
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("************************************************************************************************************************");
@@ -135,7 +147,52 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.WriteLine("************************************************************************************************************************\n");
             Console.ResetColor();
-            Console.WriteLine("{3} = {4} {5}units \n{6} = {7} {8} units \n\nThe {2} is: {0} {1} units\n\nPress Enter to go back to the seletion screen", finalAnswer, unit, requiredValue, given, givenValue, unitOfGiven, given2, givenValue2, unitOfGiven2);
+            counter++;
+            history.Add(new SummaryList() { iteration = counter, shapeChoice = shapeChoice, nameOfGiven = given, valueOfGiven = givenValue, unitOfGiven = unitOfGiven, nameOfGiven2 = given2, valueOfGiven2 = givenValue2, unitOfGiven2 = unitOfGiven2, required = requiredValue, requiredvalue = finalAnswer, requiredunit = unit });
+            foreach (SummaryList iteration in history)//basically prints the outcome after every computation
+            {
+                innercounter += 1;
+                if (innercounter == counter)
+                    Console.WriteLine(iteration);
+            }
+            innercounter = 0;//resets inner counter
+            /*if(givenValue2 == "null")
+                Console.WriteLine("{3} = {4} {5}units\n\nThe {2} is: {0} {1} units\n\nPress Enter to go back to the seletion screen", finalAnswer, unit, requiredValue, given, givenValue, unitOfGiven);
+            else
+                Console.WriteLine("{3} = {4} {5}units \n{6} = {7} {8} units \n\nThe {2} is: {0} {1} units\n\nPress Enter to go back to the seletion screen", finalAnswer, unit, requiredValue, given, givenValue, unitOfGiven, given2, givenValue2, unitOfGiven2);
+            */
+            Console.WriteLine("Press Enter to go back to the seletion screen");
+            Console.ReadLine();
+        }
+        static void Summary()
+        {
+            Console.WriteLine("You chose option 2!");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("************************************************************************************************************************");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine("\t\t\t\t\t\tS U M M A R Y  S C R E E N\n");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("************************************************************************************************************************\n");
+            Console.ResetColor();
+            foreach (SummaryList iteration in history)//basically prints all iterations of the computation
+            {
+                Console.WriteLine(iteration);
+            }
+            Console.WriteLine("End of List. Press Enter to go back to the selection screen");
+            Console.ReadLine();
+        }
+        static void Exit()
+        {
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("************************************************************************************************************************");
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+            Console.WriteLine("\t\t\t\t\t\tE X I T  S C R E E N\n");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine("************************************************************************************************************************\n");
+            Console.ResetColor();
+            string[] exitMessage = { "Thank you for using my program to compute different variables concerning circles and curved shapes", "In the future, I plan to include more shapes and formulas to my program", "I also plan on improving the user friendliness of the program", "Again, thank you and I hope you use my program again!" };
+            Reader(exitMessage);
             Console.ReadLine();
         }
         static bool CheckComputability(int given)
@@ -159,20 +216,6 @@ namespace Dahuyag_JK_CIRCLES_AND_CURVED_SHAPES_Project
                 Console.ReadLine();
             }
             return canCompute;
-        }
-        static void Exit()
-        {
-            Console.Clear();
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("************************************************************************************************************************");
-            Console.ForegroundColor = ConsoleColor.DarkGreen;
-            Console.WriteLine("\t\t\t\t\t\tE X I T  S C R E E N\n");
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("************************************************************************************************************************\n");
-            Console.ResetColor();
-            string[] exitMessage = { "Thank you for using my program to compute different variables concerning circles and curved shapes", "In the future, I plan to include more shapes and formulas to my program", "I also plan on improving the user friendliness of the program", "Again, thank you and I hope you use my program again!" };
-            Reader(exitMessage);
-            Console.ReadLine();
         }
         //General Circle Method
         static double Circle(out bool squaredFinalUnit, out string toBeComputed, out string nameOfGiven, out string valueOfGiven, out string unitOfGiven, out string nameOfGiven2, out string valueOfGiven2, out string unitOfGiven2)
