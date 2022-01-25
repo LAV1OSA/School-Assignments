@@ -101,7 +101,7 @@
             }
         }
     }
-    public void Display(List<string> filters)
+    public List<string> Display(List<string> filters)
     {
         bookQuantity = 0;
         jewelryQuantity = 0;
@@ -185,6 +185,7 @@
                 }
             }
         }
+        return filters;
     }
     public void Search()
     {

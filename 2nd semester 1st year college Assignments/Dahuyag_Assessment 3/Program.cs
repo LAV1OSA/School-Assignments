@@ -15,10 +15,10 @@ var book3 = new Book("comedy", "962NTS", "A Confederacy of Dunces", "John Kenned
 var book4 = new Book("romance", "100TAD", "People We Meet on Vacation", "Emily Henry", 361);
 var book5 = new Book("educational", "865NFD", "The Coddling of the American Mind", "Greg Lukianoff & Jonathan Haidt", 500);
 var souvenir1 = new Souvenir("keychain", "1J5D7G", "Master", SouvenirMaterialType.Plastic, "Japan");
-var souvenir2 = new Souvenir("stamp", "7Q5GF5", "Original", SouvenirMaterialType.Plastic, "Paris");
+var souvenir2 = new Souvenir("stamp", "7Q5GF5", "Original", SouvenirMaterialType.Steel, "Paris");
 var souvenir3 = new Souvenir("bookmark", "9SGY34", "Signed", SouvenirMaterialType.Plastic, "Rome");
-var souvenir4 = new Souvenir("fridge magnet", "27G4JS", "Limited", SouvenirMaterialType.Plastic, "India");
-var souvenir5 = new Souvenir("T-shirt", "NQX37F", "Silk", SouvenirMaterialType.Plastic, "Singapore");
+var souvenir4 = new Souvenir("fridge magnet", "27G4JS", "Limited", SouvenirMaterialType.Wood, "India");
+var souvenir5 = new Souvenir("T-shirt", "NQX37F", "Silk", SouvenirMaterialType.Steel, "Singapore");
 var collectible1 = new CollectibleFigure("Nami", "61MU24", "One Piece", 1000, Rarity.Rare, Condition.Good);
 var collectible2 = new CollectibleFigure("Darth Vader", "72MLP4", "Stara Wars", 2500, Rarity.Common, Condition.Bad);
 var collectible3 = new CollectibleFigure("Tanjiro", "1LASU4", "Demon Slayer", 1250, Rarity.Common, Condition.Best);
@@ -57,7 +57,7 @@ defaultThings.AddRange(defaultSouvenirs);
 defaultThings.AddRange(defaultCollectibles);
 defaultThings.AddRange(defaultFootWears);
 var store = new Store(new List<Thing>(defaultThings));
-
+var ongoingFilters = new List<string>() { "Book", "Jewelry", "Souvenir", "CollectibleFigure", "Footwear" };
 DefaultPrint:
 Console.Write("Would you like to print the default items? \n1 - yes\n2 - no\nChoice: ");
 int defaultPrintChoice = Convert.ToInt32(Console.ReadLine());
@@ -142,9 +142,11 @@ switch (functionChoice)
         Console.ReadLine();
         goto Functions;
     case 3:
+        ItemSearcher.Search(ongoingFilters, store);
+        Console.ReadLine();
         goto Functions;
     case 4:
-        store.Display(Filterer.Filter());
+        ongoingFilters = store.Display(Filterer.Filter());
         Console.ReadLine();
         goto Functions;
     case 5:
