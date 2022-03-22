@@ -67,4 +67,31 @@ public class ProductsManager
             item.Restock(amount);
         }
     }
+    public void Sorter(string sort)
+    {
+        switch (sort.ToLower())
+        {
+            case "id":
+                Products = Products.OrderBy(item => item.Id).ToList();
+                break;
+            case "name":
+                Products = Products.OrderBy(item => item.Name).ThenBy(item => item.Id).ToList();
+                break;
+            case "description":
+                Products = Products.OrderBy(item => item.Description).ThenBy(item => item.Id).ToList();
+                break;
+            case "date added":
+                Products = Products.OrderBy(item => item.DateAdded).ThenBy(item => item.Id).ToList();
+                break;
+            case "expiry date":
+                Products = Products.OrderBy(item => item.ExpiryDate).ThenBy(item => item.Id).ToList();
+                break;
+            case "price":
+                Products = Products.OrderBy(item => item.DiscountedPrice).ThenBy(item => item.Id).ToList();
+                break;
+            default:
+                break;
+        }
+    }
+
 }

@@ -1,11 +1,11 @@
 ﻿using System.Globalization;
 public class ProductsProvider
 {
-    private FileStream _file;
-    public List<Product> GetProducts(string fileLocation)
-    {
+    public ProductsManager ProductsManager { get; set; }
 
-        _file = File.Open(fileLocation, FileMode.Open);
+    public static List<Product> GetProducts(string fileLocation)
+    {
+        var _file = File.Open(fileLocation, FileMode.Open);
         var reader = new StreamReader(_file);
         var data = reader.ReadToEnd();
 
@@ -38,15 +38,31 @@ public class ProductsProvider
             float restockPrice = float.Parse(splitColumns[6]);
             int quantity = int.Parse(splitColumns[7]);
             var product = new Product(id, name, description, price, discount, dateAdded, expiryDate, restockPrice, quantity);
-            if (Enum.TryParse<ProductType>(splitColumns[8], out ProductType type))
+/*            if (Enum.TryParse<ProductType>(splitColumns[8], out ProductType type))
             {
                 Enum.Parse(typeof(ProductType), splitColumns[8]);
                 product.Type = type;
             }
-            products.Add(product);
+*/            products.Add(product);
         }
         _file.Close();
         reader.Close();
         return products;
+    }
+    public void Save(string fileLocation)//save products to file
+    {
+        var _file = File.Open(fileLocation, FileMode.OpenOrCreate);
+        _file.Close();
+        _file = File.Open(fileLocation, FileMode.Truncate);
+        var writer = new StreamWriter(_file);
+
+        foreach (var item in ProductsManager.Products)
+        {
+            writer.Write($"{item.Id};{item.Name} - {item.Description};{item.OriginalPrice};{item.Discount};{item.DateAdded.Date};{item.ExpiryDate.Date};{item.RestockPrice};{item.Quantity}\n");
+        }
+
+        writer.Flush();
+        writer.Close();
+        _file.Close();
     }
 }

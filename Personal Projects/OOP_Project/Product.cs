@@ -3,7 +3,7 @@
     private string _id;
     private string _name;
     private string _description;
-    private ProductType _type;
+    //private ProductType _type;
     private float _originalPrice;
     private float _discount;
     private float _discountedPrice;
@@ -15,7 +15,7 @@
     public string Id { get => _id; private set => _id = value; }
     public string Name { get => _name; set => _name = value; }
     public string Description { get => _description; set => _description = value; }
-    public ProductType Type { get => _type; set => _type = value; }
+    //public ProductType Type { get => _type; set => _type = value; }
     public float OriginalPrice { get => _originalPrice; set => _originalPrice = value; }
     public float Discount 
     {   
@@ -53,7 +53,7 @@
         _restockPrice = restockPrice;
         _quantity = quantity;
     }
-    public Product(
+/*    public Product(
         string id, 
         string name, 
         string description, 
@@ -69,7 +69,7 @@
         _type = type;
     }
 
-    public void Restock(int amount)
+*/    public void Restock(int amount)
     {
         if (amount < 0) throw new InvalidOperationException("Invalid amount to restock");
         Quantity += amount;

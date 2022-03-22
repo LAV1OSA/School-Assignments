@@ -1,49 +1,28 @@
-﻿public class Display //
+﻿public class Display 
 {
-    private ProductsManager _productsManager;
     public List<Product> ProductsOnPage = new List<Product>();
+    public List<Product> ProductsToPage = new List<Product>();//list of products to apply paging to
+    public int itemsPerPage = 10;
 
-    public ProductsManager ProductsManager
-    {
-        get { return _productsManager; }
-        set { _productsManager = value; }
-    }
+    public ProductsManager ProductsManager { get; set; }
+    public ProductSearcher ProductSearcher { get; set; }
 
-    public void Pager(int currentPage, int itemsPerPage)//applies paging to the items
+    public void Pager(int currentPage, int newItemsPerPage)//applies paging to the items
     {
-        ProductsOnPage = _productsManager.Products
-               .Skip((currentPage - 1) * itemsPerPage)
-               .Take(itemsPerPage)
+        if (ProductsToPage.Count == 0) ProductsToPage = ProductsManager.Products;
+
+        ProductsOnPage = ProductsToPage
+               .Skip((currentPage - 1) * newItemsPerPage)
+               .Take(newItemsPerPage)
                .ToList();
 
-        float personsCount = _productsManager.Products.Count;
-        double totalPage = personsCount / itemsPerPage;
+        float productsCount = ProductsToPage.Count;
+        double totalPage = productsCount / newItemsPerPage;
         totalPage = Math.Ceiling(totalPage);
      
 
         Console.WriteLine("--- Products ---");
         ProductPrinter.Print(ProductsOnPage);
         Console.WriteLine($"Page {currentPage} of {totalPage}");
-    }
-    public void Sorter(int sort)
-    {
-        switch (sort)
-        {
-            case 1:
-                ProductsManager.Products.Select(item => item.Id).OrderBy()
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            case 5:
-                break;
-            case 6:
-                break;
-            default:
-                break;
-        }
     }
 }
