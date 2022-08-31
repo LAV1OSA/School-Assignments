@@ -1,8 +1,6 @@
 ﻿using System.Text;
 using AS3_A;
 using AS4_A;
-using AS4_B;
-using NUnit.Framework;
 
 namespace AS4_B
 {
@@ -129,24 +127,5 @@ namespace AS4_B
             BooleanOperators.TryGetValue(operator2, out var operator2Precedence);
             return operator1Precedence < operator2Precedence;
         }
-    }
-}
-public class Tests
-{
-    [Test]
-    public void METHOD()
-    {
-        var postfixExpression1 = BooleanInfixToPostfixConverter.ConvertBooleanToPostfix("(2==2) || !(4 > 2) && (1 >= 0) || (3.01 > 40.22)");
-        Console.WriteLine(postfixExpression1);
-        /*
-        var result1 = PostfixEvaluator.EvaluatePostfixExpression(postfixExpression1);
-        Console.WriteLine(result1);
-
-
-        var postfixExpression = InfixToPostfixConverter.ConvertToPostfix("((6.00) (2+2)) + {3 +1- 2 +2 -1- (2 + 3)4 * 8} / 7 + (2)cos(sin(30 - 10 * 2) * 20 + 1)");
-        Console.WriteLine(postfixExpression);
-        var result = PostfixEvaluator.EvaluatePostfixExpression(postfixExpression);
-        Console.WriteLine(result);
-    */
     }
 }

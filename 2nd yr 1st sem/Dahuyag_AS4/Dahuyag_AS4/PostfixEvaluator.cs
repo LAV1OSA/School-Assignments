@@ -55,7 +55,6 @@ namespace AS4_A
                 "/" => y / x,
                 "%" => y % x,
                 "^" => Math.Pow(y, x),
-                "sin" => Math.Sin(x),
                 _ => throw new InvalidOperationException("Operation not recognized")
             };
         }
