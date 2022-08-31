@@ -15,47 +15,63 @@ namespace AS4_A
         public static double EvaluatePostfixExpression(string postfixExpression)
         {
             var stack = new StackList<double>();
-            var numberString = new StringBuilder();
-            foreach (var character in postfixExpression)
+            var split = postfixExpression.Split(' ');
+            foreach (var str in split)
             {
-                if (InfixToPostfixConverter.numbersAndDividingSymbols.Contains(character))
-                    numberString.Append(character);
-                else if (InfixToPostfixConverter.IsOperator(character))
+                if (InfixToPostfixConverter.IsOperator(str))
                 {
-                    if (stack.Count < 2) throw new InvalidOperationException("Invalid Postfix Notation");
-                    var x = stack.Pop();
-                    var y = stack.Pop();
-                    var result = Calculate(y, x, character);
+                    var result = 0d;
+                    if (InfixToPostfixConverter.TrigonometricFunctions.Contains(str))
+                    {
+                        var x = stack.Pop();
+                        result = Calculate(x, str);
+                    }
+                    else
+                    {
+                        if (stack.Count < 2) throw new InvalidOperationException("Invalid Postfix Notation");
+                        var x = stack.Pop();
+                        var y = stack.Pop();
+                        result = Calculate(y, x, str);
+                    }
                     stack.Push(result);
+
                 }
                 else
                 {
-                    if (numberString.Length == 0) continue;
-                    stack.Push(double.Parse(numberString.ToString()));
-                    numberString.Clear();
+                    if (str.Length == 0) continue;
+                    stack.Push(double.Parse(str));
                 }
             }
             return stack.Pop();
         }
 
-        private static double Calculate(double y, double x, char operation)
+        private static double Calculate(double y, double x, string operation)
         {
-            switch (operation)
+            return operation switch
             {
-                case '+':
-                    return y + x;
-                case '-':
-                    return y - x;
-                case '*':
-                    return y * x;
-                case '/':
-                    return y / x;
-                case '%':
-                    return y % x;
-                case '^':
-                    return Math.Pow(y,x);
-            }
-            throw new InvalidOperationException("Operation not recognized");
+                "+" => y + x,
+                "-" => y - x,
+                "*" => y * x,
+                "/" => y / x,
+                "%" => y % x,
+                "^" => Math.Pow(y, x),
+                "sin" => Math.Sin(x),
+                _ => throw new InvalidOperationException("Operation not recognized")
+            };
         }
+        private static double Calculate(double x, string trigonometricOperation)
+        {
+            return trigonometricOperation switch
+            {
+                "sin" => Math.Sin(x),
+                "cos" => Math.Cos(x),
+                "tan" => Math.Tan(x),
+                "csc" => 1 / Math.Sin(x),
+                "sec" => 1 / Math.Cos(x),
+                "cot" => 1 / Math.Tan(x),
+                _ => throw new InvalidOperationException("Operation not recognized")
+            };
+        }
+
     }
 }

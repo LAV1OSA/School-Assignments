@@ -20,11 +20,11 @@ namespace AS4_A
             {"cot", 2},
             {"*", 3},
             {"/", 3},
-            {"%", 4},
+            {"%", 3},
             {"^", 4}
         };
-        public static string numbersAndDividingSymbols = "0123456789.,";
-        public static Dictionary<char, char> delimiters = new Dictionary<char, char>()
+        public static string NumbersAndDividingSymbols = "0123456789.,";
+        public static Dictionary<char, char> Delimiters = new Dictionary<char, char>()
         {
             {'(', ')'},
             {'[',']'},
@@ -41,7 +41,7 @@ namespace AS4_A
             {
                 var character = infixNotation[index];
                 //Multi-digit logic
-                if (numbersAndDividingSymbols.Contains(character)) numberString.Append($"{character}");
+                if (NumbersAndDividingSymbols.Contains(character)) numberString.Append($"{character}");
                 else
                 {
                     if (numberString.Length == 0) { }
@@ -52,12 +52,12 @@ namespace AS4_A
                     }
                 }
                 //Checks for opening delimiter
-                if (delimiters.ContainsKey(character)) stack.Push(character.ToString());
+                if (Delimiters.ContainsKey(character)) stack.Push(character.ToString());
                 //Checks for closing delimiter
-                else if (delimiters.ContainsValue(character))
+                else if (Delimiters.ContainsValue(character))
                 {
                     char delimiter;
-                    while (!delimiters.TryGetValue(stack.Peek()[0], out delimiter))
+                    while (!Delimiters.TryGetValue(stack.Peek()[0], out delimiter))
                     {
                         sb.Append($"{stack.Pop()} ");
                         if (stack.Count == 0) break;
@@ -72,11 +72,11 @@ namespace AS4_A
                         throw new InvalidOperationException("Delimiters do not match");
                 }               
                 //Does operation logic
-                else if (!numbersAndDividingSymbols.Contains(character) && character != ' ')
+                else if (!NumbersAndDividingSymbols.Contains(character) && character != ' ')
                 {
                     operatorString.Append(character);
 
-                    if (operatorsOrderedByPrecedence.ContainsKey(operatorString.ToString()))
+                    if (OperatorsOrderedByPrecedence.ContainsKey(operatorString.ToString()))
                     {
                         DoOperation(stack, operatorString.ToString(), sb);
                         operatorString.Clear();
@@ -90,7 +90,7 @@ namespace AS4_A
                     && infixNotation[index + 1] != ' ')
                 {
                     var impliedOperator = "*";
-                    if (!IsOperator(infixNotation[index + 1]))
+                    if (!IsOperator(infixNotation[index + 1].ToString()))
                         DoOperation(stack, impliedOperator, sb);
 
                     recentlyClosedDelimiter = false;
@@ -100,7 +100,7 @@ namespace AS4_A
             sb.Append($"{numberString} ");
             foreach (var remaining in stack)
             {
-                if (delimiters.ContainsKey(remaining[0])) throw new InvalidOperationException("Delimeters do not match");
+                if (Delimiters.ContainsKey(remaining[0])) throw new InvalidOperationException("Delimeters do not match");
                 sb.Append($"{remaining} " );
             }
             return sb.ToString();
@@ -112,7 +112,7 @@ namespace AS4_A
             else
             {
                 while (!Precedence(stack.Peek(), characterString)
-                       && !(delimiters.ContainsKey(stack.Peek()[0]) || delimiters.ContainsValue(stack.Peek()[0])))
+                       && !(Delimiters.ContainsKey(stack.Peek()[0]) || Delimiters.ContainsValue(stack.Peek()[0])))
                 {
                     sb.Append($"{stack.Pop()} ");
                     if (stack.Count == 0) break;
@@ -122,15 +122,15 @@ namespace AS4_A
             }
         }
 
-        public static bool IsOperator(char c)
+        public static bool IsOperator(string s)
         {
-            return operatorsOrderedByPrecedence.ContainsKey(c.ToString());
+            return OperatorsOrderedByPrecedence.ContainsKey(s);
         }
 
         public static bool Precedence(string operator1, string operator2)
         {
-            operatorsOrderedByPrecedence.TryGetValue(operator1, out var operator1Precedence);
-            operatorsOrderedByPrecedence.TryGetValue(operator2, out var operator2Precedence);
+            OperatorsOrderedByPrecedence.TryGetValue(operator1, out var operator1Precedence);
+            OperatorsOrderedByPrecedence.TryGetValue(operator2, out var operator2Precedence);
             return operator1Precedence < operator2Precedence;
         }
     }
