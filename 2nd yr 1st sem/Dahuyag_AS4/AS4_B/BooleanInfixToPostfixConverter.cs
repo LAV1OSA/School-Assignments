@@ -1,37 +1,27 @@
-﻿using System.Globalization;
-using System.Text;
+﻿using System.Text;
 using AS3_A;
-using Dahuyag_Assessment_1;
+using AS4_A;
+using AS4_B;
 using NUnit.Framework;
 
-namespace AS4_A
+namespace AS4_B
 {
-    public class InfixToPostfixConverter
+    public class BooleanInfixToPostfixConverter:InfixToPostfixConverter
     {
-        public static string[] TrigonometricFunctions = { "sin", "cos", "tan", "csc", "sec", "cot" };
-        public static Dictionary<string, int> OperatorsOrderedByPrecedence = new Dictionary<string, int>()
+        public static Dictionary<string, int> BooleanOperators = new Dictionary<string, int>()
         {
-            {"+", 4},
-            {"-", 4},
-            {"sin", 5},
-            {"cos", 5},
-            {"tan", 5},
-            {"csc", 5},
-            {"sec", 5},
-            {"cot", 5},
-            {"*", 9},
-            {"/", 9},
-            {"%", 9},
-            {"^", 10}
+            {"&&", 1},
+            {"||", 1},
+            {"!", 1},
+            {"==", 2},
+            {"!=", 2},
+            {"<=", 3},
+            {"<", 3},
+            {">", 3},
+            {">=", 3},
         };
-        public static string NumbersAndDividingSymbols = "0123456789.,";
-        public static Dictionary<char, char> Delimiters = new Dictionary<char, char>()
-        {
-            {'(',')'},
-            {'[',']'},
-            {'{','}'}
-        };
-        public static string ConvertToPostfix(string infixNotation)
+
+        public static string ConvertBooleanToPostfix(string infixNotation)
         {
             var stack = new StackList<string>();
             var sb = new StringBuilder();
@@ -78,17 +68,17 @@ namespace AS4_A
                     }
                     else
                         throw new InvalidOperationException("Delimiters do not match");
-                }               
+                }
                 //Does operation logic
                 else if (!NumbersAndDividingSymbols.Contains(character) && character != ' ')
                 {
                     operatorString.Append(character);
 
-                    
-                    if (OperatorsOrderedByPrecedence.ContainsKey(operatorString.ToString()))
+
+                    if (BooleanOperators.ContainsKey(operatorString.ToString()))
                     {
                         //check if unary operation
-                        OperatorsOrderedByPrecedence.TryGetValue(operatorString.ToString(), out int value);
+                        BooleanOperators.TryGetValue(operatorString.ToString(), out int value);
                         if (value == 5)
                         {
                             isInUnaryOperation = true;
@@ -99,29 +89,16 @@ namespace AS4_A
                         operatorString.Clear();
                     }
                 }
-
-                //Application of implied multiplication
-                if (recentlyClosedDelimiter 
-                    && index != infixNotation.Length - 1
-                    && infixNotation[index + 1] != ' ')
-                {
-                    var impliedOperator = "*";
-                    if (!IsOperator(infixNotation[index + 1].ToString()) && !Delimiters.ContainsValue(infixNotation[index + 1]))
-                        DoOperation(stack, impliedOperator, sb);
-
-                    recentlyClosedDelimiter = false;
-                }
             }
             //add the remaining number in (if any)
             sb.Append($"{numberString} ");
             foreach (var remaining in stack)
             {
                 if (Delimiters.ContainsKey(remaining[0])) throw new InvalidOperationException("Delimiters do not match");
-                sb.Append($"{remaining} " );
+                sb.Append($"{remaining} ");
             }
             return sb.ToString();
         }
-
         private static void DoOperation(IStack<string> stack, string characterString, StringBuilder sb)
         {
             if (stack.Count == 0) stack.Push(characterString);
@@ -140,32 +117,33 @@ namespace AS4_A
 
         public static bool IsOperator(string s)
         {
-            return OperatorsOrderedByPrecedence.ContainsKey(s);
+            return BooleanOperators.ContainsKey(s);
         }
 
-        public static bool Precedence(string operator1, string operator2)
+        public static bool BooleanPrecedence(string operator1, string operator2)
         {
-            OperatorsOrderedByPrecedence.TryGetValue(operator1, out var operator1Precedence);
-            OperatorsOrderedByPrecedence.TryGetValue(operator2, out var operator2Precedence);
+            BooleanOperators.TryGetValue(operator1, out var operator1Precedence);
+            BooleanOperators.TryGetValue(operator2, out var operator2Precedence);
             return operator1Precedence < operator2Precedence;
         }
     }
-
-    public class Tests
+}
+public class Tests
+{
+    [Test]
+    public void METHOD()
     {
-        [Test]
-        public void METHOD()
-        {
-            var postfixExpression1 = InfixToPostfixConverter.ConvertToPostfix("7 + (2)cos(sin(30 - 10 * 2) * 20 + 1)");
-            Console.WriteLine(postfixExpression1);
-            var result1 = PostfixEvaluator.EvaluatePostfixExpression(postfixExpression1);
-            Console.WriteLine(result1);
+        var postfixExpression1 = BooleanInfixToPostfixConverter.ConvertBooleanToPostfix("!(4 > 2)&& (1 >= 0) || (3.01 > 40.22)");
+        Console.WriteLine(postfixExpression1);
+        /*
+        var result1 = PostfixEvaluator.EvaluatePostfixExpression(postfixExpression1);
+        Console.WriteLine(result1);
 
 
-            var postfixExpression = InfixToPostfixConverter.ConvertToPostfix("((6.00) (2+2)) + {3 +1- 2 +2 -1- (2 + 3)4 * 8} / 7 + (2)cos(sin(30 - 10 * 2) * 20 + 1)");
-            Console.WriteLine(postfixExpression);
-            var result = PostfixEvaluator.EvaluatePostfixExpression(postfixExpression);
-            Console.WriteLine(result);
-        }
+        var postfixExpression = InfixToPostfixConverter.ConvertToPostfix("((6.00) (2+2)) + {3 +1- 2 +2 -1- (2 + 3)4 * 8} / 7 + (2)cos(sin(30 - 10 * 2) * 20 + 1)");
+        Console.WriteLine(postfixExpression);
+        var result = PostfixEvaluator.EvaluatePostfixExpression(postfixExpression);
+        Console.WriteLine(result);
+    */
     }
 }
