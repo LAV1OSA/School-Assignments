@@ -15,8 +15,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AS3_A\AS3_A.csproj" />
-    <ProjectReference Include="..\AS4_A\AS4_A.csproj" />
-    <ProjectReference Include="..\Dahuyag_AS4\AS4_A.csproj" />
     <ProjectReference Include="..\Dahuyag_Assessment_1\Dahuyag_Assessment_1\Dahuyag_Assessment_1.csproj" />
     <ProjectReference Include="..\LinkedListCore\LinkedListCore\LinkedListCore.csproj" />
   </ItemGroup>
