@@ -32,9 +32,10 @@ namespace AS4_A
         };
         public static string ConvertToPostFix(string infixNotation)
         {
-            var stack = new StackList<char>();
+            var stack = new StackList<string>();
             var sb = new StringBuilder();
             var numberString = new StringBuilder();
+            var operatorString = new StringBuilder();
             var recentlyClosedDelimiter = false;
             for (var index = 0; index < infixNotation.Length; index++)
             {
@@ -51,14 +52,12 @@ namespace AS4_A
                     }
                 }
                 //Checks for opening delimiter
-                if (delimiters.ContainsKey(character)) stack.Push(character);
-                //Does operation logic
-                if (IsOperator(character)) DoOperation(stack, character, sb);
+                if (delimiters.ContainsKey(character)) stack.Push(character.ToString());
                 //Checks for closing delimiter
-                if (delimiters.ContainsValue(character))
+                else if (delimiters.ContainsValue(character))
                 {
                     char delimiter;
-                    while (!delimiters.TryGetValue(stack.Peek(), out delimiter))
+                    while (!delimiters.TryGetValue(stack.Peek()[0], out delimiter))
                     {
                         sb.Append($"{stack.Pop()} ");
                         if (stack.Count == 0) break;
@@ -71,14 +70,26 @@ namespace AS4_A
                     }
                     else
                         throw new InvalidOperationException("Delimiters do not match");
+                }               
+                //Does operation logic
+                else if (!numbersAndDividingSymbols.Contains(character) && character != ' ')
+                {
+                    operatorString.Append(character);
+
+                    if (operatorsOrderedByPrecedence.ContainsKey(operatorString.ToString()))
+                    {
+                        DoOperation(stack, operatorString.ToString(), sb);
+                        operatorString.Clear();
+                    }
                 }
+
 
                 //Application of implied multiplication
                 if (recentlyClosedDelimiter 
                     && index != infixNotation.Length - 1
                     && infixNotation[index + 1] != ' ')
                 {
-                    var impliedOperator = '*';
+                    var impliedOperator = "*";
                     if (!IsOperator(infixNotation[index + 1]))
                         DoOperation(stack, impliedOperator, sb);
 
@@ -89,25 +100,25 @@ namespace AS4_A
             sb.Append($"{numberString} ");
             foreach (var remaining in stack)
             {
-                if (delimiters.ContainsKey(remaining)) throw new InvalidOperationException("Delimeters do not match");
+                if (delimiters.ContainsKey(remaining[0])) throw new InvalidOperationException("Delimeters do not match");
                 sb.Append($"{remaining} " );
             }
             return sb.ToString();
         }
 
-        private static void DoOperation(StackList<char> stack, char character, StringBuilder sb)
+        private static void DoOperation(StackList<string> stack, string characterString, StringBuilder sb)
         {
-            if (stack.Count == 0) stack.Push(character);
+            if (stack.Count == 0) stack.Push(characterString);
             else
             {
-                while (!Precedence(stack.Peek(), character)
-                       && !(delimiters.ContainsKey(stack.Peek()) || delimiters.ContainsValue(stack.Peek())))
+                while (!Precedence(stack.Peek(), characterString)
+                       && !(delimiters.ContainsKey(stack.Peek()[0]) || delimiters.ContainsValue(stack.Peek()[0])))
                 {
                     sb.Append($"{stack.Pop()} ");
                     if (stack.Count == 0) break;
                 }
 
-                stack.Push(character);
+                stack.Push(characterString);
             }
         }
 
@@ -116,10 +127,10 @@ namespace AS4_A
             return operatorsOrderedByPrecedence.ContainsKey(c.ToString());
         }
 
-        public static bool Precedence(char operator1, char operator2)
+        public static bool Precedence(string operator1, string operator2)
         {
-            operatorsOrderedByPrecedence.TryGetValue(operator1.ToString(), out var operator1Precedence);
-            operatorsOrderedByPrecedence.TryGetValue(operator2.ToString(), out var operator2Precedence);
+            operatorsOrderedByPrecedence.TryGetValue(operator1, out var operator1Precedence);
+            operatorsOrderedByPrecedence.TryGetValue(operator2, out var operator2Precedence);
             return operator1Precedence < operator2Precedence;
         }
     }
@@ -129,7 +140,7 @@ namespace AS4_A
         [Test]
         public void METHOD()
         {
-            var postfixExpression = InfixToPostfixConverter.ConvertToPostFix("(6.00) (2+2) + {3 +1- 2 +2 -1- (2 + 3)4 * 8} / 7 + 1");
+            var postfixExpression = InfixToPostfixConverter.ConvertToPostFix("(6.00) (2+2) + {3 +1- 2 +2 -1- (2 + 3)4 * 8} / 7 + sin(30 - 10 * 2) + 1");
             Console.WriteLine(postfixExpression);
 
             var result = PostfixEvaluator.EvaluatePostfixExpression(postfixExpression);
