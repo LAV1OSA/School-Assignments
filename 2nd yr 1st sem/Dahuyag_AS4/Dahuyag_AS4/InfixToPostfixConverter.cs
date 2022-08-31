@@ -8,7 +8,8 @@ namespace AS4_A
 {
     public class InfixToPostfixConverter
     {
-        public static Dictionary<string, int> operatorsOrderedByPrecedence = new Dictionary<string, int>()
+        public static string[] TrigonometricFunctions = { "sin", "cos", "tan", "csc", "sec", "cot" };
+        public static Dictionary<string, int> OperatorsOrderedByPrecedence = new Dictionary<string, int>()
         {
             {"+", 1},
             {"-", 1},
