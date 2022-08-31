@@ -85,7 +85,7 @@ namespace AS4_A
                     operatorString.Append(character);
 
                     
-                    if (OperatorsOrderedByPrecedence.ContainsKey(operatorString.ToString()))
+                    if (IsOperator(operatorString.ToString()))
                     {
                         //check if unary operation
                         OperatorsOrderedByPrecedence.TryGetValue(operatorString.ToString(), out int value);

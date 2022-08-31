@@ -12,13 +12,13 @@ namespace AS4_B
         {
             {"&&", 1},
             {"||", 1},
-            {"!", 1},
             {"==", 2},
             {"!=", 2},
             {"<=", 3},
             {"<", 3},
             {">", 3},
             {">=", 3},
+            {"!", 5},
         };
 
         public static string ConvertBooleanToPostfix(string infixNotation)
@@ -74,8 +74,11 @@ namespace AS4_B
                 {
                     operatorString.Append(character);
 
-
-                    if (BooleanOperators.ContainsKey(operatorString.ToString()))
+                    if((operatorString.ToString() == ">" 
+                        || operatorString.ToString() == "<")
+                       && infixNotation[index + 1] == '=')
+                        continue;
+                    if (IsBooleanOperator(operatorString.ToString()))
                     {
                         //check if unary operation
                         BooleanOperators.TryGetValue(operatorString.ToString(), out int value);
@@ -104,7 +107,7 @@ namespace AS4_B
             if (stack.Count == 0) stack.Push(characterString);
             else
             {
-                while (!Precedence(stack.Peek(), characterString)
+                while (!BooleanPrecedence(stack.Peek(), characterString)
                        && !(Delimiters.ContainsKey(stack.Peek()[0]) || Delimiters.ContainsValue(stack.Peek()[0])))
                 {
                     sb.Append($"{stack.Pop()} ");
@@ -115,7 +118,7 @@ namespace AS4_B
             }
         }
 
-        public static bool IsOperator(string s)
+        public static bool IsBooleanOperator(string s)
         {
             return BooleanOperators.ContainsKey(s);
         }
@@ -133,7 +136,7 @@ public class Tests
     [Test]
     public void METHOD()
     {
-        var postfixExpression1 = BooleanInfixToPostfixConverter.ConvertBooleanToPostfix("!(4 > 2)&& (1 >= 0) || (3.01 > 40.22)");
+        var postfixExpression1 = BooleanInfixToPostfixConverter.ConvertBooleanToPostfix("(2==2) || !(4 > 2) && (1 >= 0) || (3.01 > 40.22)");
         Console.WriteLine(postfixExpression1);
         /*
         var result1 = PostfixEvaluator.EvaluatePostfixExpression(postfixExpression1);
