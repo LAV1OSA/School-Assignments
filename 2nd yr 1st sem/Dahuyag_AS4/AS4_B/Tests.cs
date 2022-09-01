@@ -7,7 +7,7 @@ public class Tests
     [Test]
     public void VisualConfirmationTest()
     {
-        var postfixExpression1 = BooleanInfixToPostfixConverter.ConvertBooleanToPostfix("(2==2) || !(4 > 2) && (1 >= 0) && (3.01 > 40.22)");
+        var postfixExpression1 = BooleanInfixToPostfixConverter.ConvertBooleanToPostfix("(2==2) || !((4 > 2) && ((1 >= 0) && (3.01 > 40.22)))");
         Console.WriteLine(postfixExpression1);
         var result1 = BooleanPostfixEvaluator.EvaluatePostfixExpression(postfixExpression1);
         Console.WriteLine(result1);

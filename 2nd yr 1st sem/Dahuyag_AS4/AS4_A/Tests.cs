@@ -17,5 +17,11 @@ public class Tests
         Console.WriteLine(postfixExpression);
         var result = PostfixEvaluator.EvaluatePostfixExpression(postfixExpression);
         Console.WriteLine(result);
+
+        var postfixExpression2 = InfixToPostfixConverter.ConvertToPostfix("sin(5^2 + 10)^2 * 10 * cos 100^(1/2) * 10 ");
+        Console.WriteLine(postfixExpression2);
+        var result2 = PostfixEvaluator.EvaluatePostfixExpression(postfixExpression2);
+        Console.WriteLine(result2);
+
     }
 }

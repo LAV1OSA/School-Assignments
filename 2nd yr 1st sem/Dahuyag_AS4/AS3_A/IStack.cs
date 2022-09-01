@@ -2,7 +2,7 @@
 
 namespace AS3_A
 {
-    public interface IStack<T> : IEnumerable<T>/*, IComparable<IStack<T>>*/
+    public interface IStack<T> : IEnumerable<T>
     {
         int Count { get; }
 

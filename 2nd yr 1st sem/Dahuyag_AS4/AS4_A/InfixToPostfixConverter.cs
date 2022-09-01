@@ -12,15 +12,15 @@ namespace AS4_A
         {
             {"+", 4},
             {"-", 4},
-            {"sin", 5},
-            {"cos", 5},
-            {"tan", 5},
-            {"csc", 5},
-            {"sec", 5},
-            {"cot", 5},
-            {"*", 9},
-            {"/", 9},
-            {"%", 9},
+            {"*", 7},
+            {"/", 7},
+            {"%", 7},
+            {"sin", 8},
+            {"cos", 8},
+            {"tan", 8},
+            {"csc", 8},
+            {"sec", 8},
+            {"cot", 8},
             {"^", 10}
         };
         public static string NumbersAndDividingSymbols = "0123456789.,";
@@ -37,7 +37,6 @@ namespace AS4_A
             var numberString = new StringBuilder();
             var operatorString = new StringBuilder();
             var recentlyClosedDelimiter = false;
-            var isInUnaryOperation = false;
             for (var index = 0; index < infixNotation.Length; index++)
             {
                 var character = infixNotation[index];
@@ -68,12 +67,6 @@ namespace AS4_A
                     {
                         stack.Pop();
                         recentlyClosedDelimiter = true;
-                        //if is in a parenthesis after a unary expression, add unary operation to the string
-                        if (isInUnaryOperation)
-                        {
-                            sb.Append($"{stack.Pop()} ");
-                            isInUnaryOperation = false;
-                        }
                     }
                     else
                         throw new InvalidOperationException("Delimiters do not match");
@@ -86,15 +79,7 @@ namespace AS4_A
                     
                     if (IsOperator(operatorString.ToString()))
                     {
-                        //check if unary operation
-                        OperatorsOrderedByPrecedence.TryGetValue(operatorString.ToString(), out int value);
-                        if (value == 5)
-                        {
-                            isInUnaryOperation = true;
-                            stack.Push(operatorString.ToString());
-                        }
-                        else
-                            DoOperation(stack, operatorString.ToString(), sb);
+                        DoOperation(stack, operatorString.ToString(), sb);
                         operatorString.Clear();
                     }
                 }
