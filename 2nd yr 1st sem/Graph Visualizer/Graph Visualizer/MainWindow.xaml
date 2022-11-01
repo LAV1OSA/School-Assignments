@@ -5,62 +5,82 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Graph_Visualizer"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
     Title="MainWindow"
     Width="1600"
     Height="900"
-    mc:Ignorable="d">
-    <ScrollViewer>
-        <DockPanel Margin="10" Width="Auto">
-            <Viewbox AllowDrop="True" Height="1050" DockPanel.Dock="Left" >
-                <Canvas x:Name="CanvasMain" AllowDrop="True" Background="Bisque" Height="900" Width="1050">
-                    <Ellipse Width="50" Height="50" Fill="Aqua" MouseDown="Ellipse_MouseDown" MouseUp="Ellipse_MouseUp" MouseMove="Ellipse_MouseMove"></Ellipse>
-                    <Ellipse Width="50" Height="50" Fill="Aqua" MouseDown="Ellipse_MouseDown" MouseUp="Ellipse_MouseUp" MouseMove="Ellipse_MouseMove"></Ellipse>
-                    <Ellipse Width="50" Height="50" Fill="Aqua" MouseDown="Ellipse_MouseDown" MouseUp="Ellipse_MouseUp" MouseMove="Ellipse_MouseMove"></Ellipse>
-                    <Ellipse Width="50" Height="50" Fill="Aqua" MouseDown="Ellipse_MouseDown" MouseUp="Ellipse_MouseUp" MouseMove="Ellipse_MouseMove"></Ellipse>
-                    <Ellipse Width="50" Height="50" Fill="Aqua" MouseDown="Ellipse_MouseDown" MouseUp="Ellipse_MouseUp" MouseMove="Ellipse_MouseMove"></Ellipse>
-                    <Ellipse Width="50" Height="50" Fill="Aqua" MouseDown="Ellipse_MouseDown" MouseUp="Ellipse_MouseUp" MouseMove="Ellipse_MouseMove"></Ellipse>
-                    <Ellipse Width="50" Height="50" Fill="Aqua" MouseDown="Ellipse_MouseDown" MouseUp="Ellipse_MouseUp" MouseMove="Ellipse_MouseMove"></Ellipse>
-                    <Ellipse Width="50" Height="50" Fill="Aqua" MouseDown="Ellipse_MouseDown" MouseUp="Ellipse_MouseUp" MouseMove="Ellipse_MouseMove"></Ellipse>
-                    <Ellipse Width="50" Height="50" Fill="Aqua" MouseDown="Ellipse_MouseDown" MouseUp="Ellipse_MouseUp" MouseMove="Ellipse_MouseMove"></Ellipse>
-                    <Ellipse Width="50" Height="50" Fill="Aqua" MouseDown="Ellipse_MouseDown" MouseUp="Ellipse_MouseUp" MouseMove="Ellipse_MouseMove"></Ellipse>
-                </Canvas>
-            </Viewbox>
-            <Grid Width="250" Margin="10,10,10,0">
-                <Grid.RowDefinitions >
-                    <RowDefinition Height="Auto"></RowDefinition>
-                </Grid.RowDefinitions>
-                <StackPanel>
-                    <Button x:Name="BtnAddVertex" Width="250" Height="60" Margin="0,10" Content="Add Vertex" FontSize="30">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="15"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                    <Button Width="250" Height="60" Margin="0,10">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="15"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                    <Button Width="250" Height="60" Margin="0,10">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="15"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                    <Button Width="250" Height="60" Margin="0,10">
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="15"/>
-                            </Style>
-                        </Button.Resources>
-                    </Button>
-                </StackPanel>
+    mc:Ignorable="d"
+    Loaded="MainWindow_OnLoaded" 
+    >
+    <DockPanel Margin="10" Width="Auto" Height="850" >
+        <Viewbox x:Name="ViewBox">
+            <ItemsControl ItemsSource="{Binding VerticesAsShapes}" x:Name="CanvasMain">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <Canvas IsItemsHost="True" Background="Bisque" Height="850" Width="1050">
+                        </Canvas>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemContainerStyle>
+                    <Style>
+                        <!--These setters will control the position of the shape-->
+                        <Setter Property="Canvas.Top" Value="{Binding Top}"/>
+                        <Setter Property="Canvas.Left" Value="{Binding Left}"/>
+                    </Style>
+                </ItemsControl.ItemContainerStyle>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <!--Path Data="{Binding PathData}"
+                          Fill="Aqua"
+                          AllowDrop="True"
+                          MouseDown="Ellipse_MouseDown"
+                          MouseMove="Ellipse_MouseMove"
+                          MouseUp="Ellipse_MouseUp"
+                    /-->
+                        <Ellipse Width="50" Height="50" 
+                             Fill="Aqua"
+                             MouseDown="Ellipse_MouseDown"
+                             MouseMove="Ellipse_MouseMove"
+                             MouseUp="Ellipse_MouseUp"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Viewbox>
+        <Grid Width="250" Margin="10,10,10,0">
+            <Grid.RowDefinitions >
+                <RowDefinition Height="Auto"></RowDefinition>
+            </Grid.RowDefinitions>
+            <StackPanel>
+                <Button x:Name="BtnAddVertex" Width="250" Height="60" Margin="0,10" Content="Add Vertex" FontSize="30" Click="BtnAddVertex_OnClick">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="15"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button Width="250" Height="60" Margin="0,10">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="15"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button Width="250" Height="60" Margin="0,10">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="15"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+                <Button Width="250" Height="60" Margin="0,10">
+                    <Button.Resources>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="15"/>
+                        </Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
 
-            </Grid>
-        </DockPanel>
-    </ScrollViewer>
+        </Grid>
+    </DockPanel>
 </Window>
