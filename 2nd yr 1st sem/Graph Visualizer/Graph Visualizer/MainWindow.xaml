@@ -16,7 +16,7 @@
         Height="850"
         Margin="10">
         <Viewbox x:Name="ViewBox">
-            <ItemsControl x:Name="CanvasMain" ItemsSource="{Binding VerticesAsShapes}">
+            <ItemsControl x:Name="CanvasMain" ItemsSource="{Binding GraphObjects.Collection}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <Canvas
@@ -31,19 +31,50 @@
                         <!--  These setters will control the position of the shape  -->
                         <Setter Property="Canvas.Top" Value="{Binding Top}" />
                         <Setter Property="Canvas.Left" Value="{Binding Left}" />
+                        <Setter Property="Panel.ZIndex" Value="{Binding ZIndex}" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>
-                <ItemsControl.ItemTemplate>
+                <ItemsControl.Resources>
                     <DataTemplate DataType="{x:Type local:VertexAsEllipse}">
-                        <Ellipse
-                            Width="50"
-                            Height="50"
-                            Fill="Aqua"
-                            MouseDown="Ellipse_MouseDown"
-                            MouseMove="Ellipse_MouseMove"
-                            MouseUp="Ellipse_MouseUp" />
+                        <StackPanel Orientation="Horizontal">
+                            <Ellipse
+                                Width="20"
+                                Height="20"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Fill="Aqua"
+                                MouseDown="Ellipse_MouseDown"
+                                MouseMove="Ellipse_MouseMove"
+                                MouseUp="Ellipse_MouseUp" />
+                            <TextBlock
+                                Padding="10,0"
+                                HorizontalAlignment="Center"
+                                Text="{Binding VertexName}" />
+
+                        </StackPanel>
+
                     </DataTemplate>
-                </ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type local:EdgesAsLines}">
+                        <Grid Width="Auto" Height="Auto">
+                            <Line
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Stroke="{Binding Color}"
+                                StrokeThickness="3"
+                                X1="{Binding X1}"
+                                X2="{Binding X2}"
+                                Y1="{Binding Y1}"
+                                Y2="{Binding Y2}" />
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Background="Bisque"
+                                FontSize="15"
+                                Text="{Binding Weight}"
+                                TextAlignment="Center" />
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.Resources>
             </ItemsControl>
         </Viewbox>
         <Grid Width="Auto" Margin="10,10,10,0">
@@ -83,11 +114,11 @@
                         x:Name="TxtBoxAddEdge"
                         Width="250"
                         Height="60"
-                        FontSize="30"
-                        Text="From,To,Weight"
                         Margin="10"
                         Padding="10,10,10,0"
-                        HorizontalAlignment="Left" />
+                        HorizontalAlignment="Left"
+                        FontSize="30"
+                        Text="From,To,Weight" />
                     <Button
                         x:Name="BtnAddEdge"
                         Width="Auto"
@@ -105,16 +136,61 @@
                         </Button.Resources>
                     </Button>
                 </StackPanel>
-                <Button
-                    Width="250"
-                    Height="60"
-                    Margin="0,10">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="15" />
-                        </Style>
-                    </Button.Resources>
-                </Button>
+                <StackPanel Orientation="Vertical" Margin="0,50">
+                    <StackPanel Orientation="Horizontal" >
+                        <TextBlock
+                            Width="80"
+                            Height="60"
+                            Margin="10"
+                            Padding="10,10,10,0"
+                            FontSize="30"
+                            Text="From" />
+                        <ComboBox
+                            x:Name="CmbBoxFrom"
+                            Width="350"
+                            Height="60"
+                            Margin="10"
+                            Padding="10,10,10,0"
+                            FontSize="30"
+                            Text="Select Vertex"
+                        />
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock
+                            Width="80"
+                            Height="60"
+                            Margin="10"
+                            Padding="10,10,10,0"
+                            FontSize="30"
+                            Text="To" />
+                        <ComboBox
+                            x:Name="CmbBoxTo"
+                            Width="350"
+                            Height="60"
+                            Margin="10"
+                            Padding="10,10,10,0"
+                            FontSize="30"
+                            Text="Select Vertex"
+                        />
+                    </StackPanel>
+
+                    <Button
+                        x:Name="BtnShortestPath"
+                        Width="Auto"
+                        Height="60"
+                        Margin="10"
+                        Padding="20,0"
+                        HorizontalAlignment="Right"
+                        Click="BtnGetShortestPath_OnClick"
+                        Content="Get Shortest Path"
+                        FontSize="30">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="15" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+                </StackPanel>
                 <Button
                     Width="250"
                     Height="60"
