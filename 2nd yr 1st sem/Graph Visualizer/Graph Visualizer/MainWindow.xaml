@@ -9,87 +9,119 @@
     Title="MainWindow"
     Width="1600"
     Height="900"
-    mc:Ignorable="d"
-    Loaded="MainWindow_OnLoaded" 
-    >
-    <DockPanel Margin="10" Width="Auto" Height="850" >
-        <Viewbox x:Name="ViewBox" >
-            <ItemsControl ItemsSource="{Binding VerticesAsShapes}" x:Name="CanvasMain">
+    Loaded="MainWindow_OnLoaded"
+    mc:Ignorable="d">
+    <DockPanel
+        Width="Auto"
+        Height="850"
+        Margin="10">
+        <Viewbox x:Name="ViewBox">
+            <ItemsControl x:Name="CanvasMain" ItemsSource="{Binding VerticesAsShapes}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <Canvas IsItemsHost="True" Background="Bisque" Height="850" Width="1050">
-                        </Canvas>
+                        <Canvas
+                            Width="1050"
+                            Height="850"
+                            Background="Bisque"
+                            IsItemsHost="True" />
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>
                     <Style>
-                        <!--These setters will control the position of the shape-->
-                        <Setter Property="Canvas.Top" Value="{Binding Top}"/>
-                        <Setter Property="Canvas.Left" Value="{Binding Left}"/>
+                        <!--  These setters will control the position of the shape  -->
+                        <Setter Property="Canvas.Top" Value="{Binding Top}" />
+                        <Setter Property="Canvas.Left" Value="{Binding Left}" />
                     </Style>
                 </ItemsControl.ItemContainerStyle>
                 <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <!--Path Data="{Binding PathData}"
-                          Fill="Aqua"
-                          AllowDrop="True"
-                          MouseDown="Ellipse_MouseDown"
-                          MouseMove="Ellipse_MouseMove"
-                          MouseUp="Ellipse_MouseUp"
-                    /-->
-                        <Ellipse Width="50" Height="50" 
-                             Fill="Aqua"
-                             MouseDown="Ellipse_MouseDown"
-                             MouseMove="Ellipse_MouseMove"
-                             MouseUp="Ellipse_MouseUp"/>
+                    <DataTemplate DataType="{x:Type local:VertexAsEllipse}">
+                        <Ellipse
+                            Width="50"
+                            Height="50"
+                            Fill="Aqua"
+                            MouseDown="Ellipse_MouseDown"
+                            MouseMove="Ellipse_MouseMove"
+                            MouseUp="Ellipse_MouseUp" />
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
         </Viewbox>
         <Grid Width="Auto" Margin="10,10,10,0">
-            <Grid.RowDefinitions >
-                <RowDefinition Height="Auto"></RowDefinition>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <StackPanel HorizontalAlignment="Left">
                 <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="TxtBoxAddVertex" Width="250" Height="60" Margin="10" Text="Name of Vertex" Padding="10" FontSize="30" HorizontalAlignment="Left"></TextBox>
-                    <Button x:Name="BtnAddVertex" Width="Auto" Height="60" Margin="10" Content="Add Vertex" Padding="20,0" FontSize="30" Click="BtnAddVertex_OnClick" HorizontalAlignment="Right">
+                    <TextBox
+                        x:Name="TxtBoxAddVertex"
+                        Width="250"
+                        Height="60"
+                        Margin="10"
+                        Padding="10"
+                        HorizontalAlignment="Left"
+                        FontSize="30"
+                        Text="Name of Vertex" />
+                    <Button
+                        x:Name="BtnAddVertex"
+                        Width="Auto"
+                        Height="60"
+                        Margin="10"
+                        Padding="20,0"
+                        HorizontalAlignment="Right"
+                        Click="BtnAddVertex_OnClick"
+                        Content="Add Vertex"
+                        FontSize="30">
                         <Button.Resources>
                             <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="15"/>
+                                <Setter Property="CornerRadius" Value="15" />
                             </Style>
                         </Button.Resources>
                     </Button>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <TextBox x:Name="TxtBoxAddEdge" Width="250" Height="60" Margin="10" HorizontalAlignment="Left"></TextBox>
-                    <Button x:Name="BtnAddEdge" 
-                            Width="Auto" 
-                            Height="60" 
-                            Margin="10" 
-                            Content="Add Edge" 
-                            Padding="20,0" 
-                            FontSize="30" 
-                            Click="BtnAddVertex_OnClick" 
-                            HorizontalAlignment="Right">
+                    <TextBox
+                        x:Name="TxtBoxAddEdge"
+                        Width="250"
+                        Height="60"
+                        FontSize="30"
+                        Text="From,To,Weight"
+                        Margin="10"
+                        Padding="10,10,10,0"
+                        HorizontalAlignment="Left" />
+                    <Button
+                        x:Name="BtnAddEdge"
+                        Width="Auto"
+                        Height="60"
+                        Margin="10"
+                        Padding="20,0"
+                        HorizontalAlignment="Right"
+                        Click="BtnAddEdge_OnClick"
+                        Content="Add Edge"
+                        FontSize="30">
                         <Button.Resources>
                             <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="15"/>
+                                <Setter Property="CornerRadius" Value="15" />
                             </Style>
                         </Button.Resources>
                     </Button>
                 </StackPanel>
-                <Button Width="250" Height="60" Margin="0,10">
+                <Button
+                    Width="250"
+                    Height="60"
+                    Margin="0,10">
                     <Button.Resources>
                         <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="15"/>
+                            <Setter Property="CornerRadius" Value="15" />
                         </Style>
                     </Button.Resources>
                 </Button>
-                <Button Width="250" Height="60" Margin="0,10">
+                <Button
+                    Width="250"
+                    Height="60"
+                    Margin="0,10">
                     <Button.Resources>
                         <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="15"/>
+                            <Setter Property="CornerRadius" Value="15" />
                         </Style>
                     </Button.Resources>
                 </Button>

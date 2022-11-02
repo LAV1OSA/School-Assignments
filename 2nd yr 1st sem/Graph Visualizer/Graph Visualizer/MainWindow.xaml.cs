@@ -28,14 +28,13 @@ namespace Graph_Visualizer
     {
         public FileDataProvider<string> DataProvider = new FileDataProvider<string>();
         public Graph<string> Graph { get; set; }
-        public ObservableCollection<Vertex> VerticesAsShapes { get; set; }
-        public ObservableCollection<Vertex> EdgesAsShapes { get; set; }
+        public ObservableCollection<VertexAsEllipse> VerticesAsShapes { get; set; }
         private bool _isDraggingVertex;
 
         public MainWindow()
         {
             InitializeComponent();
-            VerticesAsShapes = new ObservableCollection<Vertex>();
+            VerticesAsShapes = new ObservableCollection<VertexAsEllipse>();
             DataContext = this;
         }
 
@@ -44,7 +43,7 @@ namespace Graph_Visualizer
             Graph = graph;
             for (int i = 0; i < graph.VertexCount; i++)
             {
-                VerticesAsShapes.Add(new Vertex(graph.Vertices[i],i));
+                VerticesAsShapes.Add(new VertexAsEllipse(graph.Vertices[i]));
             }
         }
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
@@ -55,23 +54,10 @@ namespace Graph_Visualizer
                 Graph = DataProvider.Graph;
                 for (int i = 0; i < Graph.VertexCount; i++)
                 {
-                    VerticesAsShapes.Add(new Vertex(Graph.Vertices[i], i));
+                    VerticesAsShapes.Add(new VertexAsEllipse(Graph.Vertices[i]));
                 }
             }
         }
-        /*private void ViewBox_MouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            UpdateViewBox((e.Delta > 0) ? 5 : -5);
-        }
-
-        private void UpdateViewBox(int i)
-        {
-            if ((VBoxMain.Width >= 0) && VBoxMain.Height >= 0)
-            {
-                VBoxMain.Width += i;
-                VBoxMain.Height += i;
-            }
-        }*/
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
         {
             Ellipse vertex = sender as Ellipse;
@@ -88,7 +74,7 @@ namespace Graph_Visualizer
         private void Ellipse_MouseMove(object sender, MouseEventArgs e)
         {
             Ellipse vertex = sender as Ellipse;
-            Vertex vertexFromSource = vertex.DataContext as Vertex;//Gets the data source from the collection of VerticesAsShapes
+            VertexAsEllipse vertexAsEllipseFromSource = vertex.DataContext as VertexAsEllipse;//Gets the data source from the collection of VerticesAsShapes
 
             if (!_isDraggingVertex) return;
 
@@ -101,21 +87,43 @@ namespace Graph_Visualizer
                 && mousePos.Y > vertex.ActualHeight/2
                 && mousePos.Y < ViewBox.ActualHeight - vertex.ActualHeight / 2)
             {
-                vertexFromSource.Left = mousePos.X - (vertex.ActualWidth / 2);
-                vertexFromSource.Top = mousePos.Y - (vertex.ActualHeight / 2);
+                vertexAsEllipseFromSource.Left = mousePos.X - (vertex.ActualWidth / 2);
+                vertexAsEllipseFromSource.Top = mousePos.Y - (vertex.ActualHeight / 2);
             }
 
         }
         private void BtnAddVertex_OnClick(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                Graph.AddVertex(TxtBoxAddVertex.Text);
+                VerticesAsShapes.Add(new VertexAsEllipse(TxtBoxAddVertex.Text));
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.ToString());
+            }
 
         }
 
+        private void BtnAddEdge_OnClick(object sender, RoutedEventArgs e)
+        {
+            var input = TxtBoxAddEdge.Text.Split(",");
+            try
+            {
+                Graph.AddEdge(new Edge(int.Parse(input[0]), int.Parse(input[1]), float.Parse(input[2])));
+                VerticesAsShapes.Add(new VertexAsEllipse(TxtBoxAddVertex.Text));
+            }
+            catch (Exception exception)
+            {
+                MessageBox.Show(exception.ToString());
+            }
+        }
     }
     /// <summary>
     /// A Vertex Class that aids in displaying the vertex to the canvas dynamically
     /// </summary>
-    public class Vertex : INotifyPropertyChanged
+    public class VertexAsEllipse : INotifyPropertyChanged
     {
         private double _top = 100;
         private double _left = 100;
@@ -129,7 +137,8 @@ namespace Graph_Visualizer
             }
         }
 
-        public double Left {
+        public double Left
+        {
             get => _left;
             set
             {
@@ -138,23 +147,13 @@ namespace Graph_Visualizer
             }
         }
         public string VertexName { get; set; }
-        public int Index { get; set; }
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public Vertex(string vertexVertexName, int index)
+        public VertexAsEllipse(string vertexVertexName)
         {
-            /*EllipseGeometry myEllipseGeometry = new EllipseGeometry();
-            myEllipseGeometry.RadiusX = 25;
-            myEllipseGeometry.RadiusY = 25;
-            */
-
             VertexName = vertexVertexName;
-            Index = index;
             Top = 20;
             Left = 20;
-            /*
-            PathData = myEllipseGeometry;
-        */
         }
 
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)

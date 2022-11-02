@@ -9,7 +9,7 @@ namespace Graphs
 {
     public class Graph<T> : IGraph<T>
     {
-        public IList<Edge> _edges { get; }
+        public IList<Edge> Edges { get; }
         public IList<IList<int>> Neighbors { get; }
         public IList<IList<int>> AdjacencyMatrix { get; }
         public int VertexCount { get => Vertices.Count; }
@@ -20,7 +20,7 @@ namespace Graphs
             Vertices = vertices;
 
             Neighbors = new List<IList<int>>();
-            _edges = edges;
+            Edges = edges;
             AdjacencyMatrix = new List<IList<int>>();
 
 
@@ -147,7 +147,7 @@ namespace Graphs
                     {
                         // search for edge (vu)
                         Edge edgeVu = null;
-                        foreach (var edge in _edges)
+                        foreach (var edge in Edges)
                         {
                             if (edge.From == vertexWithMinimalCost && edge.To == neighbor)
                             {
@@ -197,7 +197,7 @@ namespace Graphs
                 }
             }
             Vertices.Add(vertex);
-
+            
             for (int i = 0; i < VertexCount; i++)
             {
                 if (i < VertexCount - 1)
@@ -205,6 +205,7 @@ namespace Graphs
                 else
                 {
                     Neighbors.Add(new List<int>());
+                    AdjacencyMatrix.Add(new List<int>());
                     for (int j = 0; j < VertexCount; j++)
                         AdjacencyMatrix[i].Add(0);
                 }
@@ -213,7 +214,7 @@ namespace Graphs
 
         public void AddEdge(Edge edge)
         {
-            _edges.Add(edge);
+            Edges.Add(edge);
             Neighbors[edge.From].Add(edge.To);
 
             AdjacencyMatrix[edge.From][edge.To] = 1;
