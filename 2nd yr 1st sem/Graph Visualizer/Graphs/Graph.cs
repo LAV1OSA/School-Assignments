@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -184,8 +185,17 @@ namespace Graphs
             return new Path(costs, prev, searchOrder);
         }
 
-        public void AddVertex(T vertex)
+        public void AddVertex(T vertex, IComparer<T> comparer = null)
         {
+            if (comparer == null) comparer = Comparer<T>.Default;
+            
+            foreach (var vertexInGraph in Vertices)
+            {
+                if (comparer.Compare(vertex, vertexInGraph) == 0)
+                {
+                    throw new InvalidOperationException("Cannot have two vertices with same name");
+                }
+            }
             Vertices.Add(vertex);
 
             for (int i = 0; i < VertexCount; i++)

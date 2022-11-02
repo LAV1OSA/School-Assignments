@@ -74,29 +74,22 @@ namespace Graph_Visualizer
         }*/
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            Ellipse vertex = e.Source as Ellipse;
+            Ellipse vertex = sender as Ellipse;
             _isDraggingVertex = true;
             vertex.CaptureMouse();
         }
 
         private void Ellipse_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            Ellipse vertex = e.Source as Ellipse;
+            Ellipse vertex = sender as Ellipse;
             _isDraggingVertex = false;
             vertex.ReleaseMouseCapture();
         }
         private void Ellipse_MouseMove(object sender, MouseEventArgs e)
         {
-            Ellipse vertex = e.Source as Ellipse;
-            Vertex vertexFromSource = VerticesAsShapes[0];
-            foreach (var vertexAsShape in VerticesAsShapes)
-            {
-                if (vertexAsShape.VertexName == vertex.Name)
-                {
-                    vertexFromSource = vertexAsShape;
-                }
-            }
-            
+            Ellipse vertex = sender as Ellipse;
+            Vertex vertexFromSource = vertex.DataContext as Vertex;//Gets the data source from the collection of VerticesAsShapes
+
             if (!_isDraggingVertex) return;
 
             // get the position of the mouse relative to the Canvas
@@ -115,17 +108,17 @@ namespace Graph_Visualizer
         }
         private void BtnAddVertex_OnClick(object sender, RoutedEventArgs e)
         {
+
         }
 
     }
-
+    /// <summary>
+    /// A Vertex Class that aids in displaying the vertex to the canvas dynamically
+    /// </summary>
     public class Vertex : INotifyPropertyChanged
     {
         private double _top = 100;
         private double _left = 100;
-        /*
-        private Geometry _pathData;
-        */
         public double Top
         {
             get => _top;
@@ -146,15 +139,6 @@ namespace Graph_Visualizer
         }
         public string VertexName { get; set; }
         public int Index { get; set; }
-        /*public Geometry PathData {
-            get => _pathData;
-            set
-            {
-                _pathData = value;
-                OnPropertyChanged();
-            }
-        }*/
-
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public Vertex(string vertexVertexName, int index)

@@ -53,7 +53,7 @@
         /// Adds a vertex to the graph
         /// </summary>
         /// <param name="vertex">The vertex to add to the graph</param>
-        void AddVertex(T vertex);
+        void AddVertex(T vertex, IComparer<T> comparer);
         /// <summary>
         /// Adds an edge from one vertex to another
         /// </summary>
