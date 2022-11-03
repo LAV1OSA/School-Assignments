@@ -24,21 +24,37 @@ namespace Graph_Visualizer
 {
 
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for MainWindow.xaml. INotifyPropertyChanged is used for data binding
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        private Graph<string> _graph;
+        private GraphObject _graphObject;
         public FileDataProvider<string> DataProvider = new FileDataProvider<string>();
-        public Graph<string> Graph { get; set; }
-        public GraphObject GraphObjects { get; set; }
-        /*public  ObservableCollection<EdgesAsLines> EdgesAsShapes { get; set; }*/
+
+        public Graph<string> Graph
+        {
+            get => _graph;
+            set
+            {
+                _graph = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public GraphObject GraphObjects {
+            get => _graphObject;
+            set
+            {
+                _graphObject = value;
+                OnPropertyChanged();
+            }
+        }
         private bool _isDraggingVertex;
         
         public MainWindow()
         {
             InitializeComponent();
-            /*VerticesAsShapes = new ObservableCollection<VertexAsEllipse>();
-            EdgesAsShapes = new ObservableCollection<EdgesAsLines>();*/
             GraphObjects = new GraphObject();
             DataContext = this;
         }
@@ -46,14 +62,19 @@ namespace Graph_Visualizer
         public MainWindow(Graph<string> graph) :this()
         {
             Graph = graph;
-            for (int i = 0; i < graph.VertexCount; i++)
+            UpdateGraphObjects();
+        }
+
+        private void UpdateGraphObjects()
+        {
+            for (int i = 0; i < Graph.VertexCount; i++)
             {
-                var vertexShape = new VertexAsEllipse(graph.Vertices[i]);
+                var vertexShape = new VertexAsEllipse(Graph.Vertices[i]);
                 GraphObjects.Vertices.Add(vertexShape);
                 GraphObjects.Collection.Add(vertexShape);
             }
-            
-            foreach (var graphEdge in graph.Edges)
+
+            foreach (var graphEdge in Graph.Edges)
             {
                 var from = GraphObjects.Vertices[graphEdge.From];
                 var to = GraphObjects.Vertices[graphEdge.To];
@@ -62,29 +83,20 @@ namespace Graph_Visualizer
                 GraphObjects.Collection.Add(edgeShape);
             }
         }
+
+        private void LoadDefaultGraph()
+        {
+            DataProvider.CreateGraphFromFile("../../../../Vertex Data.txt", "../../../../Edge Data.txt");
+            Graph = DataProvider.Graph;
+            UpdateGraphObjects();
+        }
+
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             if (Graph == null)
             {
-                DataProvider.CreateGraphFromFile("../../../../Vertex Data.txt", "../../../../Edge Data.txt");
-                Graph = DataProvider.Graph;
-                for (int i = 0; i < Graph.VertexCount; i++)
-                {
-                    var vertexShape = new VertexAsEllipse(Graph.Vertices[i]);
-                    GraphObjects.Vertices.Add(vertexShape);
-                    GraphObjects.Collection.Add(vertexShape);
-                }
-                foreach (var graphEdge in Graph.Edges)
-                {
-                    var from = GraphObjects.Vertices[graphEdge.From];
-                    var to = GraphObjects.Vertices[graphEdge.To];
-                    var edgeShape = new EdgesAsLines(from, to, graphEdge.Weight);
-                    GraphObjects.Edges.Add(edgeShape);
-                    GraphObjects.Collection.Add(edgeShape);
-                }
+                LoadDefaultGraph();
             }
-            CmbBoxFrom.ItemsSource = Graph.Vertices;
-            CmbBoxTo.ItemsSource = Graph.Vertices;
         }
         private void Ellipse_MouseDown(object sender, MouseButtonEventArgs e)
         {
@@ -102,14 +114,14 @@ namespace Graph_Visualizer
         private void Ellipse_MouseMove(object sender, MouseEventArgs e)
         {
             Ellipse vertex = sender as Ellipse;
-            VertexAsEllipse vertexAsEllipseFromSource = vertex.DataContext as VertexAsEllipse;//Gets the data source from the collection of VerticesAsShapes
-
+            //Gets the data source from the collection of VerticesAsShapes
+            VertexAsEllipse vertexAsEllipseFromSource = vertex.DataContext as VertexAsEllipse; 
             if (!_isDraggingVertex) return;
 
             // get the position of the mouse relative to the Canvas
             var mousePos = e.GetPosition(CanvasMain);
 
-            // center the rect on the mouse
+            // center the vertex on the mouse
             if (mousePos.X < ViewBox.ActualWidth - vertex.ActualWidth/2 
                 && mousePos.X > vertex.ActualWidth/2
                 && mousePos.Y > vertex.ActualHeight/2
@@ -118,7 +130,13 @@ namespace Graph_Visualizer
                 vertexAsEllipseFromSource.Left = mousePos.X - (vertex.ActualWidth / 2);
                 vertexAsEllipseFromSource.Top = mousePos.Y - (vertex.ActualHeight / 2);
             }
-
+            //Find edges that connect to the vertex and update their coordinates
+            var connectedEdges = GraphObjects.Edges.Where(c =>
+                c.FromVertex == vertexAsEllipseFromSource || c.ToVertex == vertexAsEllipseFromSource);
+            foreach (var connectedEdge in connectedEdges)
+            {
+                connectedEdge.UpdateCoordinates();
+            }
         }
         private void BtnAddVertex_OnClick(object sender, RoutedEventArgs e)
         {
@@ -128,8 +146,6 @@ namespace Graph_Visualizer
                 var vertexShape = new VertexAsEllipse(TxtBoxAddVertex.Text);
                 GraphObjects.Vertices.Add(vertexShape);
                 GraphObjects.Collection.Add(vertexShape);
-                CmbBoxFrom.ItemsSource = Graph.Vertices;
-                CmbBoxTo.ItemsSource = Graph.Vertices;
             }
             catch (Exception exception)
             {
@@ -148,12 +164,30 @@ namespace Graph_Visualizer
                 var from = GraphObjects.Vertices[newEdge.From];
                 var to = GraphObjects.Vertices[newEdge.To];
                 var edgeShape = new EdgesAsLines(from, to, newEdge.Weight);
-                GraphObjects.Edges.Add(edgeShape);
-                GraphObjects.Collection.Add(edgeShape);
+                var existingEdge = GraphObjects.Edges.FirstOrDefault(c => (c.FromVertex == from &&
+                                                                           c.ToVertex == to) ||
+                                                                          (c.FromVertex == to &&
+                                                                           c.ToVertex == from));
+                if (existingEdge == null)
+                {
+                    GraphObjects.Edges.Add(edgeShape);
+                    GraphObjects.Collection.Add(edgeShape);
+                }
+                
             }
             catch (Exception exception)
             {
-                MessageBox.Show(exception.ToString());
+                if (exception is FormatException)
+                {
+                    MessageBox.Show("Edge format should be int,int,float");
+                }else if (exception is ArgumentOutOfRangeException)
+                {
+                    MessageBox.Show("Given input was out of range. Input should be index of the vertex");
+                }
+                else
+                {
+                    MessageBox.Show(exception.ToString());
+                }
             }
         }
 
@@ -161,42 +195,74 @@ namespace Graph_Visualizer
         {
             var fromString = CmbBoxFrom.Text;
             var toString = CmbBoxTo.Text;
+            
             var fromIndex = Graph.GetIndex(fromString);
             var toIndex = Graph.GetIndex(toString);
-            var shortestPath = Graph.GetShortestPath(fromIndex);
-            var prev = shortestPath.Prev[toIndex];
-            var cost = shortestPath.Costs[toIndex];
-            var searchOrder = new Stack<int>();
-            searchOrder.Push(toIndex);
-            while (prev != -1)
+            try
             {
-                searchOrder.Push(prev);
-                prev = shortestPath.Prev[prev];
-            }
+                var shortestPath = Graph.GetShortestPath(fromIndex);
+                var prev = shortestPath.Prev[toIndex];
+                var cost = shortestPath.Costs[toIndex];
+                var searchOrder = new Stack<int>();
+                searchOrder.Push(toIndex);
+                while (prev != -1)
+                {
+                    searchOrder.Push(prev);
+                    prev = shortestPath.Prev[prev];
+                }
 
-            var count = searchOrder.Count;
-            var edgesInPath = new List<EdgesAsLines>();
-            for (int i = 0; i < count - 1; i++)
-            {
-                var from = searchOrder.Pop();
-                var to = searchOrder.Peek(); 
-                edgesInPath.AddRange(GraphObjects.Edges.Where(
-                    c => 
-                        (c.From == GraphObjects.Vertices[from] &&
-                        c.To == GraphObjects.Vertices[to]) || 
-                        (c.From == GraphObjects.Vertices[to] &&
-                         c.To == GraphObjects.Vertices[from])
-                    ));
-            }
+                var count = searchOrder.Count;
+                var edgesInPath = new List<EdgesAsLines>();
+                for (int i = 0; i < count - 1; i++)
+                {
+                    var from = searchOrder.Pop();
+                    var to = searchOrder.Peek();
+                    edgesInPath.AddRange(GraphObjects.Edges.Where(
+                        c =>
+                            (c.FromVertex == GraphObjects.Vertices[from] &&
+                             c.ToVertex == GraphObjects.Vertices[to]) ||
+                            (c.FromVertex == GraphObjects.Vertices[to] &&
+                             c.ToVertex == GraphObjects.Vertices[from])));
+                }
 
-            foreach (var graphObjectsEdge in GraphObjects.Edges)
-            {
-                graphObjectsEdge.Color = Brushes.DimGray;
+                foreach (var graphObjectsEdge in GraphObjects.Edges)
+                {
+                    graphObjectsEdge.Color = Brushes.DimGray;
+                }
+                foreach (var edge in edgesInPath)
+                {
+                    edge.Color = Brushes.LawnGreen;
+                }
+
+                MessageBox.Show(cost == float.MaxValue
+                    ? $"There is no path from {CmbBoxFrom.Text} to {CmbBoxTo.Text}"
+                    : $"The shortest Distance from {CmbBoxFrom.Text} to {CmbBoxTo.Text} is {cost}");
             }
-            foreach (var edge in edgesInPath)
+            catch (Exception exception)
             {
-                edge.Color = Brushes.LawnGreen;
+                MessageBox.Show("Please select vertices on \"From\" and \"To\".");
             }
+        }
+
+        private void BtnClearGraph_OnClick(object sender, RoutedEventArgs e)
+        {
+            Graph = new Graph<string>(new List<string>(), new List<Edge>());
+            GraphObjects = new GraphObject();
+        }
+
+        private void BtnReloadDefault_OnClick(object sender, RoutedEventArgs e)
+        {
+            Graph = new Graph<string>(new List<string>(), new List<Edge>());
+            GraphObjects = new GraphObject();
+            LoadDefaultGraph();
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        [NotifyPropertyChangedInvocator]
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
     /// <summary>
@@ -213,25 +279,34 @@ namespace Graph_Visualizer
         private double _y2 = 100;
         private float _weight = 0;
         private Brush _color = Brushes.DimGray;
-        private VertexAsEllipse _from;
-        private VertexAsEllipse _to;
+        private VertexAsEllipse _fromVertex;
+        private VertexAsEllipse _toVertex;
+        private Thickness _margin;
 
-        public VertexAsEllipse From
+        public Thickness Margin
         {
-            get => _from;
+            get => _margin;
             set
             {
-                _from = value;
-                
+                _margin = value;
                 OnPropertyChanged();
             }
         }
-        public VertexAsEllipse To
+        public VertexAsEllipse FromVertex
         {
-            get => _to;
+            get => _fromVertex;
             set
             {
-                _to = value;
+                _fromVertex = value;
+                OnPropertyChanged();
+            }
+        }
+        public VertexAsEllipse ToVertex
+        {
+            get => _toVertex;
+            set
+            {
+                _toVertex = value;
                 OnPropertyChanged();
             }
         }
@@ -318,28 +393,28 @@ namespace Graph_Visualizer
                 OnPropertyChanged();
             }
         }
-        public EdgesAsLines(VertexAsEllipse from,VertexAsEllipse to, float weight)
+        public EdgesAsLines(VertexAsEllipse fromVertex,VertexAsEllipse toVertex, float weight)
         {
-            _from = from;
-            _to = to;
+            _fromVertex = fromVertex;
+            _toVertex = toVertex;
             _weight = weight;
-            ChangeCoordinates();
+            UpdateCoordinates();
         }
 
-        public void ChangeCoordinates()
+        public void UpdateCoordinates()
         {
-            var x1 = From.Left + From.Radius;
-            var x2 = To.Left + To.Radius;
-            var y1 = From.Top + From.Radius;
-            var y2 = To.Top + To.Radius;
+            var x1 = FromVertex.Left + FromVertex.Radius;
+            var x2 = ToVertex.Left + ToVertex.Radius;
+            var y1 = FromVertex.Top + FromVertex.Radius;
+            var y2 = ToVertex.Top + ToVertex.Radius;
             var lesserX = Math.Min(x1, x2);
             var lesserY = Math.Min(y1, y2);
-            _top = lesserY;
-            _left = lesserX;
-            _x1 = x1 - _left;
-            _y1 = y1 - _top;
-            _x2 = x2 - _left;
-            _y2 = y2 - _top;
+            //correction for text
+            Margin = new Thickness(lesserX-20, lesserY-20, 0, 0);
+            X1 = x1 - _left;
+            Y1 = y1 - _top;
+            X2 = x2 - _left;
+            Y2 = y2 - _top;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
