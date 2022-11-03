@@ -219,6 +219,7 @@ namespace Graphs
             var expectedGraph = new Graph<string>(vertices, edges);
             //act
             expectedGraph.AddVertex("I");
+            var result = expectedGraph.GetShortestPath(1);
             //assert
             for (int i = 0; i < expectedGraph.AdjacencyMatrix.Count; i++)
             {
@@ -228,6 +229,11 @@ namespace Graphs
                 }
                 Console.WriteLine();
             }
+            var expectedCosts = new List<float> { 2, 0, 3, 13, 15, 6, 12, 7, float.MaxValue };
+            var expectedPrev = new List<int> { 1, -1, 0, 0, 0, 2, 7, 2,-1 };
+
+            result.Costs.Should().Equal(expectedCosts);
+            result.Prev.Should().Equal(expectedPrev);
         }
         [Test]
         public void AddVertex_ExistingVertex_ThrowError()
