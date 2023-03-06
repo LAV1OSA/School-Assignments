@@ -19,11 +19,11 @@
         <Ribbon IsMinimized="True">
             <RibbonTab Header="Control">
                 <RibbonGroup>
-                <RibbonButton Click="ButtonBase_OnClick" Label="Add"
+                <RibbonButton x:Name="RbnBtnAddBook" Click="RbnBtnAddBook_OnClick" Label="Add"
                               LargeImageSource="Images/plus-square-svgrepo-com.png"/>
-                <RibbonButton Label="Edit" 
+                <RibbonButton x:Name="RbnBtnEditBook" Click="RbnBtnEditBook_OnClick" Label="Edit" 
                               LargeImageSource="Images/edit-svgrepo-com.png"/>
-                <RibbonButton Label="Remove"
+                <RibbonButton x:Name="RbnBtnRemoveBook" Click="RbnBtnRemoveBook_OnClick" Label="Remove"
                               LargeImageSource="Images/cross-circle-svgrepo-com.png"/>
                 </RibbonGroup>
             </RibbonTab>

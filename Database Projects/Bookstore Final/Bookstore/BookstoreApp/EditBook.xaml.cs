@@ -26,16 +26,18 @@ namespace BookstoreApp
             InitializeComponent();
         }
 
-        private static BookStoreLiteContext _context = new BookStoreLiteContext();
-        private static EditBookViewModel _viewModel = new EditBookViewModel(_context);
         private void BtnAddAuthor_OnClick(object sender, RoutedEventArgs e)
         {
-            _viewModel.AddAuthorToList();
+            var viewModel = DataContext as EditBookViewModel;
+
+            viewModel.AddAuthorToList();
         }
 
         private void BtnRemoveFromList_OnClick(object sender, RoutedEventArgs e)
         {
-            _viewModel.RemoveAuthorFromList();
+            var viewModel = DataContext as EditBookViewModel;
+
+            viewModel.RemoveAuthorFromList();
         }
 
         private void PublisherTxtSearch_OnGotFocus(object sender, RoutedEventArgs e)
@@ -67,28 +69,38 @@ namespace BookstoreApp
 
         private void BtnUpHierarchy_OnClick(object sender, RoutedEventArgs e)
         {
-            _viewModel.IncreaseHierarchy();
+            var viewModel = DataContext as EditBookViewModel;
+
+            viewModel.IncreaseHierarchy();
         }
 
         private void BtnDownHierarchy_OnClick(object sender, RoutedEventArgs e)
         {
-            _viewModel.DecreaseHierarchy();
+            var viewModel = DataContext as EditBookViewModel;
+
+            viewModel.DecreaseHierarchy();
         }
 
         private void BtnAdd_OnClick(object sender, RoutedEventArgs e)
         {
-            _viewModel.SaveBook();
+            var viewModel = DataContext as EditBookViewModel;
+
+            viewModel.SaveBook();
 
             MessageBox.Show("Book Successfully Added");
 
-            var parent = Window.GetWindow(Parent);
-            parent.Close();
-
+            Close();
         }
         private void BtnCancel_OnClick(object sender, RoutedEventArgs e)
         {
-            var parent = Window.GetWindow(Parent);
-            parent.Close();
+            Close();
+        }
+
+        private void EditBook_OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var context = DataContext as EditBookViewModel;
+            DtPDatePublished.DisplayDate = context.DatePublishedInput;
+            DtPDatePublished.SelectedDate = context.DatePublishedInput;
         }
     }
 }

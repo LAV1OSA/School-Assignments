@@ -12,11 +12,17 @@ namespace BookstoreApp.Dto
     {
         public int BookId { get; set; }
         public string Title { get; set; }
+        public string PublisherName { get; set; }
 
         public BookTitle(int bookId, string title)
         {
             BookId = bookId;
             Title = title;
+        }
+
+        public BookTitle(int bookId, string title, string publisherName):this(bookId, title)
+        {
+            PublisherName = publisherName;
         }
     }
 
@@ -51,6 +57,7 @@ namespace BookstoreApp.Dto
 
     public class BookDetails
     {
+        public int BookId { get; set; }
         public string Isbn { get; set; }
         public string Title { get; set; }
         public Price Price { get; set; }
@@ -59,10 +66,11 @@ namespace BookstoreApp.Dto
         public string Age { get; set; }
 
         public string PublisherName { get; set; }
+        public int PublisherId { get; set; }
 
         public string AuthorInString { get; set; }
 
-        public List<AuthorWrote> AuthorList { get; set; } = new();
+        public List<BookAuthor> AuthorList { get; set; } = new();
 
         public BookDetails(Book book)
         {
@@ -78,6 +86,7 @@ namespace BookstoreApp.Dto
                                                     "Either use explicit or eager loading.");
             }
 
+            BookId = book.BookId;
             Isbn = book.Isbn;
             Title = book.Title;
             Price = new Price(book.Price);
@@ -86,6 +95,7 @@ namespace BookstoreApp.Dto
             Age = $"{book.DaysOld:N0}";
 
             PublisherName = book.PublisherLink.Name;
+            PublisherId = book.PublisherLink.PublisherId;
 
             // load the authors
             var sb = new List<string>();
@@ -98,7 +108,7 @@ namespace BookstoreApp.Dto
                 sb.Add(i.AuthorLink.Name);
                 string royaltyRate = $"{i.RoyaltyRate:N2}";
 
-                AuthorList.Add(new AuthorWrote(i.AuthorLink.Name, i.AuthorLink.Address, royaltyRate));
+                AuthorList.Add(new BookAuthor(i.AuthorLink));
             }
 
             if (sb.Count == 0)
@@ -106,20 +116,6 @@ namespace BookstoreApp.Dto
             else
                 AuthorInString = string.Join(",", sb);
 
-        }
-    }
-
-    public class AuthorWrote
-    {
-        public string Name { get; set; }
-        public string Address { get; set; }
-        public string RoyaltyRate { get; set; }
-
-        public AuthorWrote(string name, string address, string royaltyRate)
-        {
-            Name = name;
-            Address = address;
-            RoyaltyRate = royaltyRate;
         }
     }
 }

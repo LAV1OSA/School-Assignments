@@ -59,11 +59,16 @@ namespace BookstoreApp.Dto
         public string Address { get; set; }
         public float RoyaltyRate { get; set; }
 
-        public BookAuthor(int authorId, string name, string address, float royaltyRate)
+        public BookAuthor(Author author)
         {
-            AuthorId = authorId;
-            Name = name;
-            Address = address;
+            AuthorId = author.AuthorId;
+            Name = author.Name;
+            Address = author.Address;
+            RoyaltyRate = 50;
+        }
+
+        public BookAuthor(Author author, float royaltyRate)
+        {
             RoyaltyRate = royaltyRate;
         }
     }
@@ -93,6 +98,7 @@ namespace BookstoreApp.Dto
             RuleForEach(c => c.Authors).NotNull().WithMessage("Error author at {CollectionIndex}")
                 .SetValidator(new BookAuthorValidator())
                 ;
+            RuleFor(c => c.Authors).NotEmpty();
         }
     }
 

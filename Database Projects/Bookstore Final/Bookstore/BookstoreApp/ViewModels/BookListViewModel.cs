@@ -8,6 +8,7 @@ using System.Windows;
 using BookstoreApp.Dto;
 using BookstoreApp.Helpers;
 using BookStoreDb;
+using BookStoreDb.Core;
 using Microsoft.Diagnostics.Tracing.Parsers.MicrosoftAntimalwareAMFilter;
 using Microsoft.EntityFrameworkCore;
 
@@ -41,6 +42,7 @@ public class BookListViewModel : INotifyPropertyChanged
         set
         {
             _searchText = value;
+            OnPropertyChanged();
 
             FilterBooks();
         }
@@ -54,7 +56,28 @@ public class BookListViewModel : INotifyPropertyChanged
 
     public void CreateNewBook()
     {
+        var newBook = new AddBookViewModel(_context);
+
         var window = new AddBook();
+
+        window.Owner = Application.Current.MainWindow;
+
+        window.DataContext = newBook;
+
+        window.Show();
+    }
+
+    public void EditBook()
+    {
+        if (_selectedBook is null) return;
+
+        var newBook = new EditBookViewModel(_context, SelectedBookDetails);
+
+        var window = new EditBook();
+
+        window.Owner = Application.Current.MainWindow;
+
+        window.DataContext = newBook;
 
         window.Show();
     }
@@ -128,7 +151,7 @@ public class BookListViewModel : INotifyPropertyChanged
 
         var books = query
             .OrderBy(c => c.Title)
-            .Select(c => new BookTitle(c.BookId, c.Title))
+            .Select(c => new BookTitle(c.BookId, c.Title,c.PublisherLink.Name))
             .Skip(PageDetails.ItemsPerPage * (PageDetails.CurrentPage - 1))
             .Take(PageDetails.ItemsPerPage)
             .ToList();
@@ -157,4 +180,27 @@ public class BookListViewModel : INotifyPropertyChanged
         PageDetails = new Pagination(FilterBooks);
     }
     #endregion
+
+    public void RemoveBook()
+    {
+        if (SelectedBook is null) return;
+
+        var book = _context.Books.First(c => c.BookId == SelectedBook.BookId);
+
+        book.Wrotes.Clear();
+        try
+        {
+            _context.Remove(book);
+            _context.SaveChanges();
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show(e.InnerException.Message);
+        }
+
+
+        Books.Remove(SelectedBook);
+        SelectedBook = null;
+        SelectedBookDetails = null;
+    }
 }

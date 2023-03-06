@@ -2,14 +2,17 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using BookstoreApp.Annotations;
 using BookstoreApp.Dto;
 using BookStoreDb;
 using BookStoreDb.Core;
+using FluentValidation;
 using Microsoft.Data.SqlClient.Server;
 using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
@@ -55,9 +58,7 @@ namespace BookstoreApp.ViewModels
             {
                 _selectedPublisher = value;
                 NewBookDto.Publisher = value;
-/*
-                SelectedPublisher = Publishers.Count > 0? Publishers[0] : null;*/
-                OnPropertyChanged(/*nameof(SelectedPublisher)*/);
+                OnPropertyChanged();
                 Check();
             }
         }
@@ -116,9 +117,9 @@ namespace BookstoreApp.ViewModels
             set
             {
                 _bookPriceInput = value;
-                NewBookDto.Price = float.Parse(value);
                 OnPropertyChanged();
                 Check();
+                NewBookDto.Price = float.Parse(value);
             }
         }
 
@@ -140,9 +141,9 @@ namespace BookstoreApp.ViewModels
             set
             {
                 _bookPagesInput = value;
-                NewBookDto.Pages = int.Parse(_bookPagesInput);
                 OnPropertyChanged();
                 Check();
+                NewBookDto.Pages = int.Parse(_bookPagesInput, NumberStyles.AllowThousands);
             }
         }
 
@@ -174,34 +175,38 @@ namespace BookstoreApp.ViewModels
 
         public void AddAuthorToList()
         {
+            if (_selectedAuthor == null) return;
             var exists = AuthorList.FirstOrDefault(c => c.AuthorId == SelectedAuthor.AuthorId);
             if (exists != null) return;
-            if (_selectedAuthor == null) return;
             AuthorList.Add(_selectedAuthor); 
             NewBookDto.Authors.Add(_selectedAuthor);
             Check();
         }
         public void RemoveAuthorFromList()
         {
+            if (_selectedAuthorOnList == null) return;
+
             AuthorList.Remove(_selectedAuthorOnList);
             NewBookDto.Authors.Add(_selectedAuthorOnList);
             Check();
         }
         public void IncreaseHierarchy()
         {
+            if (_selectedAuthorOnList == null) return;
+
             var index = AuthorList.IndexOf(_selectedAuthorOnList);
 
             if (index == 0) return;
-            if (_selectedAuthorOnList == null) return;
             
             AuthorList.Move(index, index - 1);
         }
         public void DecreaseHierarchy()
         {
+            if (_selectedAuthorOnList == null) return;
+
             var index = AuthorList.IndexOf(_selectedAuthorOnList);
 
             if (index == AuthorList.Count-1) return;
-            if (_selectedAuthorOnList == null) return;
             AuthorList.Move(index, index +1);
         }
 
@@ -243,7 +248,7 @@ namespace BookstoreApp.ViewModels
             
             var books = query
                 .OrderBy(c => c.Name)
-                .Select(c => new BookAuthor(c.AuthorId,c.Name,c.Address,50))
+                .Select(c => new BookAuthor(c))
                 .ToList();
 
             Authors.Clear();
@@ -251,6 +256,9 @@ namespace BookstoreApp.ViewModels
             foreach (var item in books) Authors.Add(item);
         }
 
+
+
+        /*
         public void Check()
         {
             NewBookDto.Check();
@@ -260,6 +268,27 @@ namespace BookstoreApp.ViewModels
             OnPropertyChanged(nameof(CanAdd));
             OnPropertyChanged(nameof(ErrorsInText));
         }
+        */
+
+        public void Check()
+        {
+            var validator = new NewBookDtoValidator();
+
+            var result = validator.Validate(this);
+
+            var sb = new StringBuilder();
+
+            foreach (var error in result.Errors)
+            {
+                sb.AppendLine(error.ErrorMessage);
+            }
+
+            ErrorsInText = sb.ToString();
+
+            OnPropertyChanged(nameof(CanAdd));
+            OnPropertyChanged(nameof(ErrorsInText));
+        }
+
 
         public virtual void SaveBook()
         {
@@ -287,7 +316,15 @@ namespace BookstoreApp.ViewModels
             }
 
             _context.Add(book);
-            _context.SaveChanges();
+            try
+            {
+                _context.SaveChanges();
+
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.InnerException.Message);
+            }
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -295,6 +332,45 @@ namespace BookstoreApp.ViewModels
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public class NewBookDtoValidator : AbstractValidator<AddBookViewModel>
+        {
+            public NewBookDtoValidator()
+            {
+                RuleFor(c => c.BookTitleInput).NotEmpty()
+                    .WithMessage("Title is required.");
+                RuleFor(c => c.BookIsbnInput).NotEmpty();
+                RuleFor(c => c.BookPriceInput)
+                    .Must(d =>
+                    {
+                        var canParse = float.TryParse(d, out float result);
+
+                        return canParse && result>0;
+                    }).WithMessage("Invalid price format and must be greater than 0");
+                RuleFor(c => c.DatePublishedInput).Must(d => d.Date <= DateTime.Now);
+                RuleFor(c => c.SelectedPublisher).NotNull();
+                RuleFor(c => c.BookPagesInput).Must(d =>
+                {
+                    var canParse = int.TryParse(d, NumberStyles.AllowThousands , new CultureInfo(""), out int result);
+                    
+                    return canParse && result > 0;
+                }).WithMessage("Pages input must be an integer and greater than 0");
+
+                RuleForEach(c => c.Authors).NotNull().WithMessage("Error author at {CollectionIndex}")
+                    .SetValidator(new BookAuthorValidator())
+                    ;
+                RuleFor(c => c.Authors).NotEmpty();
+            }
+        }
+
+        public class BookAuthorValidator : AbstractValidator<BookAuthor>
+        {
+            public BookAuthorValidator()
+            {
+                RuleFor(c => c.AuthorId).NotEmpty();
+                RuleFor(c => c.RoyaltyRate).GreaterThan(0);
+            }
         }
     }
 }

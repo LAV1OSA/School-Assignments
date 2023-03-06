@@ -16,7 +16,7 @@ public class BookStoreLiteContext : BookStoreContext
     {
         if (!op.IsConfigured)
         {
-            op.UseSqlite(@"DataSource=BookStoreDb");
+            op.UseSqlite(@"DataSource=BookStoreDbFinal");
         }
     }
 

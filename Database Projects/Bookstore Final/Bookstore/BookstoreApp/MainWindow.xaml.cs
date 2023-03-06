@@ -44,9 +44,19 @@ namespace BookstoreApp
             _context.Dispose();
         }
 
-        private void ButtonBase_OnClick(object sender, RoutedEventArgs e)
+        private void RbnBtnAddBook_OnClick(object sender, RoutedEventArgs e)
         {
             _bookListViewModel.CreateNewBook();
+        }
+
+        private void RbnBtnEditBook_OnClick(object sender, RoutedEventArgs e)
+        {
+            _bookListViewModel.EditBook();
+        }
+
+        private void RbnBtnRemoveBook_OnClick(object sender, RoutedEventArgs e)
+        {
+            _bookListViewModel.RemoveBook();
         }
     }
 }
